@@ -5,6 +5,6 @@ Developing a system to support a small library in need of support for its basic 
 
 ## Table of Contents
 ### Just filler data for now
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- Usage
+- Contributing
+- License
