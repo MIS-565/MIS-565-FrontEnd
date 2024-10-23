@@ -4,25 +4,29 @@
 }
 
 h2 {
-    color: #333;
+    color: #000000;
     text-align: center;
     margin-bottom: 20px;
 }
 
 .form-section {
-    background-color: #ffffff;
+    background-color: #ffffff83;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    text-align: center; /* Center the buttons */
+    margin-left: 80px;
+    margin-right: 200px;
+    text-align: left; /* Center the buttons */
+    
 }
 
 label {
     display: block;
     font-size: 14px;
-    color: #555;
+    color: #000000;
     margin-bottom: 6px;
+    
 }
 
 input[type="text"], .search-bar {
@@ -84,4 +88,34 @@ li {
     margin-bottom: 10px;
     border-radius: 5px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+html, body {
+    height: 100%; /* Ensure html and body take full height */
+    margin: 0; /* Remove default margin */
+}
+
+body {
+    background-image: url('./assets/bgmain.webp'); /* Reference to the image */
+    background-size: cover; /* Cover the entire viewport */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: center; /* Center the image */
+    background-attachment: fixed; /* Keep the background fixed when scrolling */
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto; /* Center the container */
+    min-height: 100vh; /* Ensure it takes at least full viewport height */
+}
+
+/* Optional: Style for form sections to add some background color */
+.form-section {
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
