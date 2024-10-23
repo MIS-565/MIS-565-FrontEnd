@@ -1,6 +1,7 @@
 .container {
     width: 100%;
     max-width: 800px;
+    margin: 0 auto; 
 }
 
 h2 {
@@ -12,7 +13,11 @@ h2 {
 .form-section {
     background-color: #ffffff;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(148 163 184);
+    background-color: rgb(241 245 249);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     text-align: center; /* Center the buttons */
@@ -26,7 +31,7 @@ label {
 }
 
 input[type="text"], .search-bar {
-    width: 100%;
+    width: 90%;
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -41,7 +46,7 @@ input[type="text"]:focus, .search-bar:focus {
 
 button {
     display: block; /* Ensure the button is a block element */
-    width: 50%; /* Adjust width as needed */
+    width: 30%; /* Adjust width as needed */
     padding: 10px;
     background-color: #007bff;
     color: white;
@@ -66,11 +71,38 @@ button:hover {
 }
 
 .search-results {
+    position: relative; /* Needed for absolute positioning of children */
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+}
+
+.close-button {
+    position: absolute;   /* Position absolutely within search-results */
+    top: 10px;           /* Distance from top */
+    right: 20px;         /* Distance from right */
+    background-color: rgb(220 38 38);     /* Remove default button background */
+    border: none;         /* Remove default button border */
+    padding: 8px;         /* Add some padding for better click target */
+    cursor: pointer;      /* Show pointer cursor on hover */
+    width: auto;          /* Override any previous width settings */
+    min-width: auto;      /* Ensure button doesn't have a minimum width */
+    display: flex;        /* For centering the SVG */
+    align-items: center;
+    justify-content: center;
+  }
+
+.close-button:hover {
+    opacity: 0.9;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3); 
+    background-color: rgb(185 28 28); /* Darker on hover for better visibility */
+}
+
+.close-button svg {
+    width: 16px; /* Size of the close icon */
+    height: 16px;
 }
 
 ul {

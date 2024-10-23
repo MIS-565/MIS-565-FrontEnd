@@ -8,9 +8,16 @@ const SimpleForm: React.FC = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<
-    Array<{ firstName: string; lastName: string; patronid: string }>
-  >([]);
+  const [searchResults, setSearchResults] = useState<Array<{
+      ITEMID: number;
+      ITEMTYPE: string;
+      ITEMNAME: string;
+      ITEMCOST: string;
+      STATUS: string;
+  }>>([]);
+
+  const [patronName, setPatronName] = useState("");
+
 
   // Handle input change for form fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,18 +33,19 @@ const SimpleForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/insert", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/patrons`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          PATRONFName: formData.firstName,
+          PATRONLName: formData.lastName
+        }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        alert("Patron data inserted successfully!");
+        alert(`Successfully added ${formData.firstName} ${formData.lastName}`);
       } else {
         alert("Failed to insert patron data.");
       }
@@ -59,35 +67,45 @@ const SimpleForm: React.FC = () => {
   };
 
   // Handle search logic for patron search
-  const handleSearch = async () => {
-    if (searchTerm.trim() === "") {
-      alert("Please enter a search term.");
-      return;
-    }
+  // Handle search logic for patron search
+const handleSearch = async () => {
+  if (searchTerm.trim() === "") {
+    alert("Please enter a search term.");
+    return;
+  }
 
-    try {
-      const response = await fetch(
-        `http://localhost:3001/search?term=${searchTerm}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSearchResults(data.results);
-      } else {
-        alert("Failed to search for patrons.");
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/patrons/${searchTerm}/items`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    } catch (error) {
-      console.error("Error during search:", error);
-      alert("An error occurred. Please try again.");
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setSearchResults(data.items);
+      setPatronName(data.patronName); // Assuming you have state to store this
+    } else {
+      alert("Failed to search for patron items.");
     }
-  };
+  } catch (error) {
+    console.error("Error during search:", error);
+    alert("An error occurred. Please try again.");
+  }
+};
+
+const clearSearch = () => {
+  setSearchResults([]);
+  setSearchTerm(""); // Optionally clear the search term
+  setPatronName(""); // Clear the patron name
+};
+
+
 
   return (
     <div className="container">
@@ -123,11 +141,11 @@ const SimpleForm: React.FC = () => {
       <div className="form-section">
         <h2>Search Patrons</h2>
         <div>
-          <label>Search by Name or Patron ID: </label>
+          <label>Search by Patron ID: </label>
           <input
             type="text"
             className="search-bar"
-            placeholder="Enter name or patron ID"
+            placeholder="Enter patron ID"
             value={searchTerm}
             onChange={handleSearchChange}
           />
@@ -139,15 +157,19 @@ const SimpleForm: React.FC = () => {
         {/* Display search results */}
         {searchResults.length > 0 && (
           <div className="search-results">
-            <h3>Search Results</h3>
-            <ul>
-              {searchResults.map((result, index) => (
-                <li key={index}>
-                  Name: {result.firstName} {result.lastName}, Patron ID:{" "}
-                  {result.patronid}
-                </li>
-              ))}
-            </ul>
+              <button className="close-button" onClick={clearSearch}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4">
+                  <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                </svg>
+              </button>
+              <h3>Items associated with {patronName}</h3>
+              <ul>
+                  {searchResults.map((item, index) => (
+                      <li key={index}>
+                          Item Name: {item.ITEMNAME}, Type: {item.ITEMTYPE}, Cost: ${item.ITEMCOST}
+                      </li>
+                  ))}
+              </ul>
           </div>
         )}
       </div>
