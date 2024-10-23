@@ -33,7 +33,7 @@ const SimpleForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/patrons`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const handleSearch = async () => {
 
   try {
     const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/patrons/${searchTerm}/items`,
+      `https://mis-565-backend-production.up.railway.app/patrons/${searchTerm}/items`,
       {
         method: "GET",
         headers: {
