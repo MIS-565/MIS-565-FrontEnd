@@ -7,7 +7,6 @@ const App: React.FC = () => {
     <>
       <HelloWorld /> {/* Use the HelloWorld component */}
       <div>
-        <p>verify below</p>
         <SimpleForm />
       </div>
     </>

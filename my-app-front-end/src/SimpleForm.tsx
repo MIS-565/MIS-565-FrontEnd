@@ -1,12 +1,18 @@
 import React, { useState } from "react";
+import "./SimpleForm.css"; // Import the CSS file
 
 const SimpleForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    patronid: "",
+    firstName: "",
+    lastName: "",
   });
 
-  // Handle input changes
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<
+    Array<{ firstName: string; lastName: string; patronid: string }>
+  >([]);
+
+  // Handle input change for form fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -15,77 +21,136 @@ const SimpleForm: React.FC = () => {
     });
   };
 
-  // Handle form submission
+  // Handle form submit for patron data entry
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate Patron ID (ensure it's 8 digits)
-    if (formData.patronid.length !== 8 || isNaN(Number(formData.patronid))) {
-      alert("Patron ID must be an 8-digit number.");
-      return; // Exit the function if validation fails
-    }
-
-    const timestamp = new Date().toLocaleString();
-    console.log(`[${timestamp}] Form data submitted:`, formData);
-
     try {
-      // Send form data to back-end API (running on localhost:3001)
-      const response = await fetch("http://localhost:3001/submit-form", {
+      const response = await fetch("http://localhost:3001/insert", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), // Convert formData to JSON format
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-      console.log("Response from server:", data);
 
       if (response.ok) {
-        alert("Form submitted successfully!");
+        alert("Patron data inserted successfully!");
       } else {
-        alert("Failed to submit form.");
+        alert("Failed to insert patron data.");
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error inserting data:", error);
       alert("An error occurred. Please try again.");
     }
 
-    // Reset the form
+    // Reset form fields after submission
     setFormData({
-      name: "",
-      patronid: "",
+      firstName: "",
+      lastName: "",
     });
   };
 
-  return (
-    <div>
-      <h2>Verify</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Patron ID:</label>
-          <input
-            type="text"
-            name="patronid"
-            value={formData.patronid}
-            onChange={handleChange}
-            required
-            maxLength={8}
-          />
-        </div>
+  // Handle input change for the search bar
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
-        <button type="submit">Submit</button>
-      </form>
+  // Handle search logic for patron search
+  const handleSearch = async () => {
+    if (searchTerm.trim() === "") {
+      alert("Please enter a search term.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/search?term=${searchTerm}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSearchResults(data.results);
+      } else {
+        alert("Failed to search for patrons.");
+      }
+    } catch (error) {
+      console.error("Error during search:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+  return (
+    <div className="container">
+      {/* Enter Patron Details Form */}
+      <div className="form-section">
+        <h2>Add Patron Details</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>First Name: </label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Last Name: </label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+      {/* Search Patrons Section */}
+      <div className="form-section">
+        <h2>Search Patrons</h2>
+        <div>
+          <label>Search by Name or Patron ID: </label>
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Enter name or patron ID"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <button className="search-button" onClick={handleSearch}>
+          Search
+        </button>
+
+        {/* Display search results */}
+        {searchResults.length > 0 && (
+          <div className="search-results">
+            <h3>Search Results</h3>
+            <ul>
+              {searchResults.map((result, index) => (
+                <li key={index}>
+                  Name: {result.firstName} {result.lastName}, Patron ID:{" "}
+                  {result.patronid}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
