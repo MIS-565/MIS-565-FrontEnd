@@ -33,7 +33,7 @@ const SimpleForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons`, {
+      const response = await fetch(`http://localhost:5001/patrons`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const handleSearch = async () => {
 
   try {
     const response = await fetch(
-      `https://mis-565-backend-production.up.railway.app/patrons/${searchTerm}/items`,
+      `http://localhost:5001/patrons/${searchTerm}/items`,
       {
         method: "GET",
         headers: {
@@ -155,23 +155,29 @@ const clearSearch = () => {
         </button>
 
         {/* Display search results */}
-        {searchResults.length > 0 && (
-          <div className="search-results">
-              <button className="close-button" onClick={clearSearch}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4">
-                  <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
-                </svg>
-              </button>
-              <h3>Items associated with {patronName}</h3>
-              <ul>
-                  {searchResults.map((item, index) => (
-                      <li key={index}>
-                          Item Name: {item.ITEMNAME}, Type: {item.ITEMTYPE}, Cost: ${item.ITEMCOST}
-                      </li>
-                  ))}
-              </ul>
-          </div>
+        {patronName && (
+    <div>
+        <h3>Patron: {patronName}</h3>
+        {searchResults.length > 0 ? (
+            <div className="search-results">
+                <button className="close-button" onClick={clearSearch}>
+                    {/* Close button SVG */}
+                </button>
+                <h3>Items associated with {patronName}</h3>
+                <ul>
+                    {searchResults.map((item, index) => (
+                        <li key={index}>
+                            Item Name: {item.ITEMNAME}, Type: {item.ITEMTYPE}, Cost: ${item.ITEMCOST}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        ) : (
+            <h3>No items found for {patronName}</h3>
         )}
+    </div>
+)}
+
       </div>
     </div>
   );
