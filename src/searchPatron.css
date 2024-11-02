@@ -2,6 +2,7 @@
     width: 100%;
     max-width: 800px;
     margin: 0 auto; 
+    padding: 20px;
 }
 
 h2 {
@@ -63,11 +64,11 @@ button:hover {
 }
 
 .search-button {
-    background-color: #28a745;
+    background-color: #007bff;
 }
 
 .search-button:hover {
-    background-color: #218838;
+    background-color: #0056b3;
 }
 
 .search-results {
