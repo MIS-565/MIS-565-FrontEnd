@@ -1,0 +1,10 @@
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6; /* Makes it visually obvious that it's disabled */
+  }
+  
+  /* Disable hover effects on disabled buttons */
+  button:disabled:hover {
+    background-color: inherit;
+    color: inherit;
+  }
