@@ -1,0 +1,41 @@
+.nav-tabs {
+    display: flex;
+    gap: 1rem; /* Optional: space between buttons */
+    justify-content: flex-end; /* Aligns items to the right */
+    align-items: center;
+  }
+  
+  .button, .search-button {
+    padding: 5px 10px; 
+    font-size: 1rem;
+    border: none;
+    background-color: #4169E1; 
+    color: #fff;
+    border-radius: 4px;
+    border-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: wrap; 
+    min-width:fit-content; 
+  }
+  
+  .button:hover, .search-button:hover {
+    background-color: #0056b3; 
+  }
+  
+  .search-button {
+    background-color: #4169E1; 
+  }
+  
+  .search-button:hover {
+    background-color: #0056b3; 
+  }
+  
+  .separator {
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.3);
+    height: 24px; /* You can adjust this value */
+    margin: 0 4px;
+    align-self: center;
+  }
+  

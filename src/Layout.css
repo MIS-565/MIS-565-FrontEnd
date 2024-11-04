@@ -1,0 +1,19 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #4169E1;
+    padding: 5px 10px;
+    border-bottom: 2px solid #333;
+  }
+  
+  .header-title {
+    margin: 0;
+    font-size: 30px;
+    color: #f9f9f9;
+    line-height: 1;
+  }
+  
+  .nav-container {
+    margin-left: auto;
+  }

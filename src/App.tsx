@@ -1,15 +1,21 @@
 import React from "react";
-import HelloWorld from "./helloworld"; // Import the HelloWorld component
-import SimpleForm from "./SimpleForm";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./Home";
+import SearchPatron from "./searchPatron";
+import CheckoutPage from "./CheckoutPage";
+import Layout from "./Layout";
 
 const App: React.FC = () => {
   return (
-    <>
-      <HelloWorld /> {/* Use the HelloWorld component */}
-      <div>
-        <SimpleForm />
-      </div>
-    </>
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search-patron" element={<SearchPatron />} />
+          <Route path="/Check-out" element={<CheckoutPage />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 };
 
