@@ -3,56 +3,51 @@ import "./searchPatron.css";
 import NavTabs from "./NavTabs";
 
 const SearchPatron: React.FC = () => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-  });
+  const [patronID, setPatronID] = useState("");
+  const [patronData, setPatronData] = useState<any>(null); // Store patron data after search
+  const [isEligible, setIsEligible] = useState<boolean>(false); // Eligibility status for checkout
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<
-    Array<{
-      ITEMID: number;
-      ITEMTYPE: string;
-      ITEMNAME: string;
-      ITEMCOST: string;
-      STATUS: string;
-    }>
-  >([]);
-
-  const [patronName, setPatronName] = useState("");
-
-  // Handle input change for form fields
-
-  // Handle input change for the search bar
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  // Handle input change for Patron ID
+  const handlePatronIDChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPatronID(e.target.value);
   };
 
   // Handle search logic for patron search
-  // Handle search logic for patron search
-  const handleSearch = async () => {
-    if (searchTerm.trim() === "") {
-      alert("Please enter a search term.");
+  const handleSearchPatron = async () => {
+    if (patronID.trim() === "") {
+      alert("Please enter Patron ID.");
       return;
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5001/patrons/${searchTerm}/items`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        setSearchResults(data.items);
+        setPatronData(data);
+
+        // Check eligibility based on membership status, late fees, and number of checkouts
+        const now = new Date();
+        const issuedDate = new Date(data.LBCD_ISSUEDATE);
+        const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
+        const isMembershipActive = issuedDate && expirationDate && now > issuedDate && now < expirationDate;
+
+        const eligible =
+          isMembershipActive &&
+          (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0) &&
+          data.NUM_CHECKOUT <= 20;
+
+        setIsEligible(eligible);
       } else {
-        alert("Failed to search for patron items.");
+        alert("Patron not found.");
+        setPatronData(null);
+        setIsEligible(false);
       }
     } catch (error) {
       console.error("Error during search:", error);
@@ -60,55 +55,60 @@ const SearchPatron: React.FC = () => {
     }
   };
 
-  const clearSearch = () => {
-    setSearchResults([]);
-    setSearchTerm(""); // Optionally clear the search term
-    setPatronName(""); // Clear the patron name
+  // Reset form fields and patron data
+  const handleReset = () => {
+    setPatronID("");
+    setPatronData(null);
+    setIsEligible(false);
   };
 
   return (
     <div className="container">
-      {/* Search Patrons Section */}
       <div className="form-section">
-        <h2>Search Patrons</h2>
+        <h2>Search Patron Information</h2>
         <div>
-          <label>Search by Patron ID: </label>
+          <label>Patron ID:</label>
           <input
             type="text"
-            className="search-bar"
-            placeholder="Enter patron ID"
-            value={searchTerm}
-            onChange={handleSearchChange}
+            className="input-field"
+            placeholder="Enter Patron ID"
+            value={patronID}
+            onChange={handlePatronIDChange}
+            required
           />
+          <button onClick={handleSearchPatron}>Search Patron</button>
         </div>
-        <button className="search-button" onClick={handleSearch}>
-          Search
-        </button>
 
-        {/* Display search results */}
-        {patronName && (
-          <div>
-            <h3>Patron: {patronName}</h3>
-            {searchResults.length > 0 ? (
-              <div className="search-results">
-                <button className="close-button" onClick={clearSearch}>
-                  {/* Close button SVG */}
-                </button>
-                <h3>Items associated with {patronName}</h3>
-                <ul>
-                  {searchResults.map((item, index) => (
-                    <li key={index}>
-                      Item Name: {item.ITEMNAME}, Type: {item.ITEMTYPE}, Cost: $
-                      {item.ITEMCOST}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        {/* Display Patron Information */}
+        {patronData && (
+          <div className="patron-info">
+            <p>
+              <strong>Name:</strong> {patronData.PATRONFName} {patronData.PATRONLName}
+            </p>
+            <p>
+              <strong>Membership Status:</strong>{" "}
+              {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
+            </p>
+            <p>
+              <strong>Late Fees:</strong> ${patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
+            </p>
+            <p>
+              <strong>Number of Checkouts:</strong> {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
+            </p>
+            {isEligible ? (
+              <p style={{ color: "green" }}>Patron is eligible for checkout.</p>
             ) : (
-              <h3>No items found for {patronName}</h3>
+              <p style={{ color: "red" }}>Patron is not eligible for checkout.</p>
             )}
           </div>
         )}
+
+        {/* Reset Button */}
+        <div className="button-container">
+          <button className="reset-button" onClick={handleReset} disabled={!patronData}>
+            Reset
+          </button>
+        </div>
       </div>
     </div>
   );
