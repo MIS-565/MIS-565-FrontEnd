@@ -20,7 +20,7 @@ const SearchPatron: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}`, {
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

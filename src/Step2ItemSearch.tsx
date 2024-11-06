@@ -12,7 +12,7 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
     }
     try {
         const response = await fetch(
-            `https://mis-565-backend-production.up.railway.app/items/${itemID}`,
+            `http://localhost:5001/items/${itemID}`,
             {
               method: "GET",
               headers: {

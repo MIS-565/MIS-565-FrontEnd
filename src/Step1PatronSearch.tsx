@@ -1,10 +1,18 @@
-// Step1PatronSearch.tsx
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
 
-
 const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: () => void }) => {
-  const { patronID, setPatronID, setPatronData, setIsEligible, patronData, isEligible, setItemID, setItemData, setCheckoutInfo } = useCheckout();
+  const {
+    patronID,
+    setPatronID,
+    setPatronData,
+    setIsEligible,
+    patronData,
+    isEligible,
+    setItemID,
+    setItemData,
+    setCheckoutInfo
+  } = useCheckout();
 
   const handleSearchPatron = async () => {
     if (patronID.trim() === "") {
@@ -12,15 +20,12 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
       return;
     }
     try {
-      const response = await fetch(
-        `https://mis-565-backend-production.up.railway.app/patrons/${patronID}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
 
@@ -30,12 +35,13 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
         const issuedDate = new Date(data.LBCD_ISSUEDATE);
         const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
         const isMembershipActive = issuedDate && expirationDate && now > issuedDate && now < expirationDate;
-        const eligible = isMembershipActive 
-                         && (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0)
-                         && data.NUM_CHECKOUT <= 20;
-        // Check eligibility here (your logic)
+
+        const eligible =
+          isMembershipActive &&
+          (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0) &&
+          data.NUM_CHECKOUT <= 20;
+
         setIsEligible(eligible);
-        
       } else {
         alert("Patron not found.");
       }
@@ -51,6 +57,28 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
     setCheckoutInfo(null);
     setItemID("");
     setItemData(null);
+  };
+
+  const handleClearLateFees = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}/clear-late-fees`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        alert("Late fees cleared successfully.");
+        // Refresh patron data after clearing late fees
+        handleSearchPatron();
+      } else {
+        alert("Failed to clear late fees.");
+      }
+    } catch (error) {
+      console.error("Error clearing late fees:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -92,12 +120,27 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
               ) : (
                 <p style={{ color: "red" }}>Patron is not eligible for checkout.</p>
               )}
+
+              {/* Display Clear Late Fees and Do Not Pay Late Fees buttons if there are outstanding fees */}
+              {parseFloat(patronData.LFEE_BALANCE) > 0 && (
+                <>
+                  <button onClick={handleClearLateFees} style={{ marginTop: "10px" }}>
+                    Pay Late Fees
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    style={{ marginTop: "10px", backgroundColor: "red", color: "white" }}
+                  >
+                    Do Not Pay Late Fees and Cancel Transaction
+                  </button>
+                </>
+              )}
             </div>
           )}
 
-          {/* Next Button - Always visible */}
+          {/* Next and Reset Buttons */}
           <div className="button-container">
-            <button 
+            <button
               className="reset-button"
               style={{ marginRight: 10 }}
               onClick={handleReset}
@@ -105,7 +148,7 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
             >
               Reset
             </button>
-            <button 
+            <button
               className="next-button"
               onClick={onNext}
               disabled={!patronData || !isEligible}
@@ -114,7 +157,6 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
               Next
             </button>
           </div>
-
         </div>
       </div>
     </>

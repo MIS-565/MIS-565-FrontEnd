@@ -23,7 +23,7 @@ const AccountPage: React.FC<AccountPageProps> = ({ patronId, onProceedToCheckout
   useEffect(() => {
     const fetchPatronDetails = async () => {
       try {
-        const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronId}`, {
+        const response = await fetch(`http://localhost:5001/patrons/${patronId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
