@@ -81,6 +81,28 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
     }
   };
 
+  const handleRenewMembership = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}/renew-membership`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        alert("Membership renewed successfully.");
+        // Refresh patron data after renewing membership
+        handleSearchPatron();
+      } else {
+        alert("Failed to renew membership.");
+      }
+    } catch (error) {
+      console.error("Error renewing membership:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -125,13 +147,28 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
               {parseFloat(patronData.LFEE_BALANCE) > 0 && (
                 <>
                   <button onClick={handleClearLateFees} style={{ marginTop: "10px" }}>
-                    Pay Late Fees
+                    Clear Late Fees
                   </button>
                   <button
                     onClick={handleReset}
                     style={{ marginTop: "10px", backgroundColor: "red", color: "white" }}
                   >
-                    Do Not Pay Late Fees and Cancel Transaction
+                    Do Not Pay Late Fees
+                  </button>
+                </>
+              )}
+
+              {/* Display Renew Membership button if membership is expired */}
+              {patronData.LBCD_isExpired === 1 && (
+                <>
+                <button onClick={handleRenewMembership} style={{ marginTop: "10px" }}>
+                  Renew Membership
+                </button>
+                <button
+                    onClick={handleReset}
+                    style={{ marginTop: "10px", backgroundColor: "red", color: "white" }}
+                  >
+                    Do Not Renew Membership
                   </button>
                 </>
               )}
