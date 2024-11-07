@@ -2,9 +2,24 @@
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
 
-
-const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: () => void }) => {
-  const { patronID, setPatronID, setPatronData, setIsEligible, patronData, isEligible, setItemID, setItemData, setCheckoutInfo } = useCheckout();
+const Step1PatronSearch = ({
+  onNext,
+  onReset,
+}: {
+  onNext: () => void;
+  onReset: () => void;
+}) => {
+  const {
+    patronID,
+    setPatronID,
+    setPatronData,
+    setIsEligible,
+    patronData,
+    isEligible,
+    setItemID,
+    setItemData,
+    setCheckoutInfo,
+  } = useCheckout();
 
   const handleSearchPatron = async () => {
     if (patronID.trim() === "") {
@@ -13,7 +28,7 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
     }
     try {
       const response = await fetch(
-        `https://mis-565-backend-production.up.railway.app/patrons/${patronID}`,
+        `http://localhost:5001/patrons/${patronID}`,
         {
           method: "GET",
           headers: {
@@ -29,13 +44,17 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
         const now = new Date();
         const issuedDate = new Date(data.LBCD_ISSUEDATE);
         const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
-        const isMembershipActive = issuedDate && expirationDate && now > issuedDate && now < expirationDate;
-        const eligible = isMembershipActive 
-                         && (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0)
-                         && data.NUM_CHECKOUT <= 20;
+        const isMembershipActive =
+          issuedDate &&
+          expirationDate &&
+          now > issuedDate &&
+          now < expirationDate;
+        const eligible =
+          isMembershipActive &&
+          (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0) &&
+          data.NUM_CHECKOUT <= 20;
         // Check eligibility here (your logic)
         setIsEligible(eligible);
-        
       } else {
         alert("Patron not found.");
       }
@@ -57,7 +76,9 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
     <>
       <div className="container">
         <div className="form-section">
-          <h2 style={{ textDecorationColor: "black" }}>Start Checkout Process By Searching For Patron</h2>
+          <h2 style={{ textDecorationColor: "black" }}>
+            Start Checkout Process By Searching For Patron
+          </h2>
           <div>
             <label> Patron ID: </label>
             <input
@@ -75,29 +96,40 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
           {patronData && (
             <div className="patron-info">
               <p>
-                <strong>Name:</strong> {patronData.PATRONFName} {patronData.PATRONLName}
+                <strong>Name:</strong> {patronData.PATRONFName}{" "}
+                {patronData.PATRONLName}
               </p>
               <p>
                 <strong>Membership Status:</strong>{" "}
                 {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
               </p>
               <p>
-                <strong>Late Fees:</strong> ${patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
+                <strong>Late Fees:</strong> $
+                {patronData.LFEE_BALANCE !== null
+                  ? patronData.LFEE_BALANCE
+                  : "0"}
               </p>
               <p>
-                <strong>Number of Checkouts:</strong> {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
+                <strong>Number of Checkouts:</strong>{" "}
+                {patronData.NUM_CHECKOUT !== null
+                  ? patronData.NUM_CHECKOUT
+                  : "0"}
               </p>
               {isEligible ? (
-                <p style={{ color: "green" }}>Patron is eligible for checkout.</p>
+                <p style={{ color: "green" }}>
+                  Patron is eligible for checkout.
+                </p>
               ) : (
-                <p style={{ color: "red" }}>Patron is not eligible for checkout.</p>
+                <p style={{ color: "red" }}>
+                  Patron is not eligible for checkout.
+                </p>
               )}
             </div>
           )}
 
           {/* Next Button - Always visible */}
           <div className="button-container">
-            <button 
+            <button
               className="reset-button"
               style={{ marginRight: 10 }}
               onClick={handleReset}
@@ -105,16 +137,21 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
             >
               Reset
             </button>
-            <button 
+            <button
               className="next-button"
               onClick={onNext}
               disabled={!patronData || !isEligible}
-              title={!patronData ? "Please search for a patron first" : !isEligible ? "Patron is not eligible for checkout" : ""}
+              title={
+                !patronData
+                  ? "Please search for a patron first"
+                  : !isEligible
+                  ? "Patron is not eligible for checkout"
+                  : ""
+              }
             >
               Next
             </button>
           </div>
-
         </div>
       </div>
     </>

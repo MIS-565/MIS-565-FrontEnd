@@ -1,13 +1,13 @@
 body {
   background-image: url('/src/assets/bgmain.webp');
-  background-size: cover; /* Ensures the image covers the entire screen */
-  background-position: center; /* Centers the background image */
-  background-repeat: no-repeat; /* Prevents tiling */
+  background-size:cover; 
+  
+  background-repeat: no-repeat; 
   opacity: 30;
 }
 
 .text-box {
-  background-color: rgba(255, 255, 255, 0.5); 
+  background-color: rgba(255, 255, 255, 0.729); 
   padding: 20px; 
   border-radius: 8px; 
   width: 80%;

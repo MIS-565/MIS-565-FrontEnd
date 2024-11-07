@@ -20,12 +20,15 @@ const SearchPatron: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `http://localhost:5001/patrons/${patronID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
 
@@ -36,7 +39,11 @@ const SearchPatron: React.FC = () => {
         const now = new Date();
         const issuedDate = new Date(data.LBCD_ISSUEDATE);
         const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
-        const isMembershipActive = issuedDate && expirationDate && now > issuedDate && now < expirationDate;
+        const isMembershipActive =
+          issuedDate &&
+          expirationDate &&
+          now > issuedDate &&
+          now < expirationDate;
 
         const eligible =
           isMembershipActive &&
@@ -83,29 +90,39 @@ const SearchPatron: React.FC = () => {
         {patronData && (
           <div className="patron-info">
             <p>
-              <strong>Name:</strong> {patronData.PATRONFName} {patronData.PATRONLName}
+              <strong>Name:</strong> {patronData.PATRONFName}{" "}
+              {patronData.PATRONLName}
             </p>
             <p>
               <strong>Membership Status:</strong>{" "}
               {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
             </p>
+
             <p>
-              <strong>Late Fees:</strong> ${patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
+              <strong>Late Fees:</strong> $
+              {patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
             </p>
             <p>
-              <strong>Number of Checkouts:</strong> {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
+              <strong>Number of Checkouts:</strong>{" "}
+              {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
             </p>
             {isEligible ? (
               <p style={{ color: "green" }}>Patron is eligible for checkout.</p>
             ) : (
-              <p style={{ color: "red" }}>Patron is not eligible for checkout.</p>
+              <p style={{ color: "red" }}>
+                Patron is not eligible for checkout.
+              </p>
             )}
           </div>
         )}
 
         {/* Reset Button */}
         <div className="button-container">
-          <button className="reset-button" onClick={handleReset} disabled={!patronData}>
+          <button
+            className="reset-button"
+            onClick={handleReset}
+            disabled={!patronData}
+          >
             Reset
           </button>
         </div>

@@ -1,0 +1,64 @@
+/* AddPatron.css */
+.add-patron-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .add-patron-container h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .patron-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #45a049;
+  }
+  
+  .patron-id-display {
+    margin-top: 20px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .patron-id-display h3 {
+    margin-bottom: 5px;
+  }
+  

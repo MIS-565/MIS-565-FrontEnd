@@ -2,8 +2,21 @@
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
 
-const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
-  const { itemID, setItemID, setItemData, setIsItemAvailable, itemData, isItemAvailable } = useCheckout();
+const Step2ItemSearch = ({
+  onNext,
+  onPrevious,
+}: {
+  onNext: () => void;
+  onPrevious: () => void;
+}) => {
+  const {
+    itemID,
+    setItemID,
+    setItemData,
+    setIsItemAvailable,
+    itemData,
+    isItemAvailable,
+  } = useCheckout();
 
   const handleSearchItem = async () => {
     if (itemID.trim() === "") {
@@ -11,21 +24,17 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
       return;
     }
     try {
-        const response = await fetch(
-            `https://mis-565-backend-production.up.railway.app/items/${itemID}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+      const response = await fetch(`http://localhost:5001/items/${itemID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
       if (response.ok) {
         setItemData(data);
         setIsItemAvailable(data.STATUS === "AVAILABLE");
-        
       } else {
         alert("Item not found.");
       }
@@ -64,18 +73,22 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
               <p>
                 <strong>Status:</strong> {itemData.STATUS}
               </p>
-              
+
               {isItemAvailable ? (
-                <p style={{ color: "green" }}>Item is available for checkout.</p>
+                <p style={{ color: "green" }}>
+                  Item is available for checkout.
+                </p>
               ) : (
-                <p style={{ color: "red" }}>Item is not available for checkout.</p>
+                <p style={{ color: "red" }}>
+                  Item is not available for checkout.
+                </p>
               )}
             </div>
           )}
 
           {/* Navigation Buttons */}
           <div className="button-container">
-            <button 
+            <button
               className="back-button"
               onClick={onPrevious}
               style={{ marginRight: 10 }}
@@ -86,18 +99,17 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
               className="next-button"
               onClick={onNext}
               disabled={!isItemAvailable}
-              title={!isItemAvailable ? "Item must be available to proceed" : ""}
+              title={
+                !isItemAvailable ? "Item must be available to proceed" : ""
+              }
             >
               Next
             </button>
           </div>
-
         </div>
       </div>
     </>
   );
 };
-
-
 
 export default Step2ItemSearch;

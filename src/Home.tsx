@@ -1,15 +1,31 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import SearchPatron from "./searchPatron";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
-import CheckoutPage from "./CheckoutPage";
-import NavTabs from "./NavTabs";
 
-const Home: React.FC = () => {
+interface Item {
+  ITEMID: number;
+  ITEMNAME: string;
+  ITEMCOST: number;
+  ITEMTYPE: string;
+}
+
+const HomePage = () => {
+  const [availableItems, setAvailableItems] = useState<Item[]>([]);
+
+  useEffect(() => {
+    const fetchAvailableItems = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/available-items");
+        const data = await response.json();
+        setAvailableItems(data); // Assuming the response is an array of item objects
+      } catch (error) {
+        console.error("Failed to fetch available items:", error);
+      }
+    };
+    fetchAvailableItems();
+  }, []);
+
   return (
-    <div className="home">
-      {/* Description below the heading */}
-
+    <div className="home-page">
       <div className="text-box">
         Wayback Public Library The Wayback Public Library is a community
         resource that provides access to a wide range of informational and
@@ -22,12 +38,8 @@ const Home: React.FC = () => {
         Public Library serves as a welcoming space for individuals and families
         to explore, learn, and grow together.
       </div>
-
-      {/* Button to navigate to the Search Patron page */}
-
-      {/* Add the SearchPatron component if needed on this page, or remove it */}
     </div>
   );
 };
 
-export default Home;
+export default HomePage;
