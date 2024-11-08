@@ -28,16 +28,13 @@ const AccountPage: React.FC<AccountPageProps> = ({
   useEffect(() => {
     const fetchPatronDetails = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5001/patrons/${patronId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
+        const response = await fetch(`http://localhost:5001/patrons/${patronId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
         if (response.ok) {
           const data = await response.json();
           setPatronDetails({

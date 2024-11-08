@@ -20,15 +20,12 @@ const SearchPatron: React.FC = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5001/patrons/${patronID}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
 

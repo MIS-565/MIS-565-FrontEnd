@@ -1,4 +1,3 @@
-// Step1PatronSearch.tsx
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
 
@@ -27,15 +26,12 @@ const Step1PatronSearch = ({
       return;
     }
     try {
-      const response = await fetch(
-        `http://localhost:5001/patrons/${patronID}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
 
@@ -70,6 +66,50 @@ const Step1PatronSearch = ({
     setCheckoutInfo(null);
     setItemID("");
     setItemData(null);
+  };
+
+  const handleClearLateFees = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}/clear-late-fees`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        alert("Late fees cleared successfully.");
+        // Refresh patron data after clearing late fees
+        handleSearchPatron();
+      } else {
+        alert("Failed to clear late fees.");
+      }
+    } catch (error) {
+      console.error("Error clearing late fees:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+  const handleRenewMembership = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}/renew-membership`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        alert("Membership renewed successfully.");
+        // Refresh patron data after renewing membership
+        handleSearchPatron();
+      } else {
+        alert("Failed to renew membership.");
+      }
+    } catch (error) {
+      console.error("Error renewing membership:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -124,10 +164,40 @@ const Step1PatronSearch = ({
                   Patron is not eligible for checkout.
                 </p>
               )}
+
+              {/* Display Clear Late Fees and Do Not Pay Late Fees buttons if there are outstanding fees */}
+              {parseFloat(patronData.LFEE_BALANCE) > 0 && (
+                <>
+                  <button onClick={handleClearLateFees} style={{ marginTop: "10px" }}>
+                    Clear Late Fees
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    style={{ marginTop: "10px", backgroundColor: "red", color: "white" }}
+                  >
+                    Do Not Pay Late Fees
+                  </button>
+                </>
+              )}
+
+              {/* Display Renew Membership button if membership is expired */}
+              {patronData.LBCD_isExpired === 1 && (
+                <>
+                <button onClick={handleRenewMembership} style={{ marginTop: "10px" }}>
+                  Renew Membership
+                </button>
+                <button
+                    onClick={handleReset}
+                    style={{ marginTop: "10px", backgroundColor: "red", color: "white" }}
+                  >
+                    Do Not Renew Membership
+                  </button>
+                </>
+              )}
             </div>
           )}
 
-          {/* Next Button - Always visible */}
+          {/* Next and Reset Buttons */}
           <div className="button-container">
             <button
               className="reset-button"
