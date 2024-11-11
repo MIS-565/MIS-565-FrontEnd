@@ -1,6 +1,7 @@
 // Step1PatronSearch.tsx
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
+import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 
 
 const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: () => void }) => {
@@ -13,7 +14,7 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
     }
     try {
       const response = await fetch(
-        `https://mis-565-backend-production.up.railway.app/patrons/${patronID}`,
+        `http://localhost:5001/patrons/${patronID}`,
         {
           method: "GET",
           headers: {
@@ -62,7 +63,7 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
             <label> Patron ID: </label>
             <input
               type="text"
-              className="input-field"
+              className="custom-input"
               placeholder="Enter Patron ID"
               value={patronID}
               onChange={(e) => setPatronID(e.target.value)}
@@ -73,26 +74,45 @@ const Step1PatronSearch = ({ onNext, onReset }: { onNext: () => void; onReset: (
 
           {/* Display Patron Information */}
           {patronData && (
-            <div className="patron-info">
-              <p>
-                <strong>Name:</strong> {patronData.PATRONFName} {patronData.PATRONLName}
-              </p>
-              <p>
-                <strong>Membership Status:</strong>{" "}
-                {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
-              </p>
-              <p>
-                <strong>Late Fees:</strong> ${patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
-              </p>
-              <p>
-                <strong>Number of Checkouts:</strong> {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
-              </p>
-              {isEligible ? (
-                <p style={{ color: "green" }}>Patron is eligible for checkout.</p>
-              ) : (
-                <p style={{ color: "red" }}>Patron is not eligible for checkout.</p>
-              )}
-            </div>
+            <Card className="max-w-[400px] mx-auto mt-6">
+              <CardHeader className="flex gap-3">
+                  <p className="text-md font-semibold text-center">
+                    {patronData.PATRONFName} {patronData.PATRONLName}
+                  </p>
+              </CardHeader>
+              <Divider/>
+              <CardBody>
+                <div className="flex flex-col gap-3">
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Membership Status:</p>
+                    <p className={`font-semibold ${patronData.LBCD_isExpired === 0 ? "text-success" : "text-danger"}`}>
+                      {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Late Fees:</p>
+                    <p className="font-semibold">
+                      ${patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Number of Checkouts:</p>
+                    <p className="font-semibold">
+                    {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Checkout Eligibility:</p>
+                    <p className={`font-semibold ${isEligible ? "text-success" : "text-danger"}`}>
+                      {isEligible ? "Eligible" : "Not Eligible"}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           )}
 
           {/* Next Button - Always visible */}

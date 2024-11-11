@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "../Home";
 import CheckoutPage from "../CheckoutPage";
 import SearchPatron from "../searchPatron";
+import Items from "../Items";
 
 const AppRoutes: React.FC = () => (
   <Router>
@@ -10,6 +11,7 @@ const AppRoutes: React.FC = () => (
       <Route path="/" element={<Home />} />
       <Route path="/searchPatron" element={<SearchPatron />} />
       <Route path="/CheckoutPage" element={<CheckoutPage />} />
+      <Route path="/items" element={<Items />} />
     </Routes>
   </Router>
 );

@@ -15,13 +15,14 @@ const CheckoutPage: React.FC = () => {
     // Add any other reset logic here, if needed
   };
 
-  
 
   return (
     <CheckoutProvider>
       <div className="container">
-        <div className="step-counter" style={{ position: "absolute", top: "120px", right: "320px" }}>
-          Step {step}/3
+        <div className="step-container">
+          <div className="step-counter" style={{ position: "absolute", top: "40px", right: "40px" }}>
+            Step {step}/3
+          </div>
         </div>
         {step === 1 && <Step1PatronSearch onNext={nextStep} onReset={reset} />}
         {step === 2 && <Step2ItemSearch onNext={nextStep} onPrevious={prevStep} />}

@@ -4,13 +4,49 @@
     justify-content: flex-end; /* Aligns items to the right */
     align-items: center;
   }
+
+  .nav-link:hover .button {
+    color: #334155; /* Match hover border color */
+}
+
+.nav-link.active .button {
+  color: #0284c7; /* Match active border color */
+}
+
+  .nav-link {
+    position: relative;
+    text-decoration: none;
+    
+  }
   
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #334155;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+  
+  .nav-link.active::after {
+    transform: scaleX(1);
+    height: 2px;
+    background-color: #0284c7;;
+  }
+
   .button, .search-button {
     padding: 5px 10px; 
     font-size: 1rem;
     border: none;
-    background-color: #4169E1; 
-    color: #fff;
+    background-color: inherit; 
+    color: #64748b;
     border-radius: 4px;
     border-color: #fff;
     cursor: pointer;
@@ -20,7 +56,8 @@
   }
   
   .button:hover, .search-button:hover {
-    background-color: #0056b3; 
+    background-color: inherit;
+    color: #334155;
   }
   
   .search-button {
@@ -33,7 +70,7 @@
   
   .separator {
     width: 2px;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: #475569;
     height: 24px; /* You can adjust this value */
     margin: 0 4px;
     align-self: center;

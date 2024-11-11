@@ -1,76 +1,123 @@
 // Step2ItemSearch.tsx
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useCheckout } from "./CheckoutContext";
+import {Autocomplete, AutocompleteItem} from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
+
+interface Item {
+  ITEMID: number;
+  ITEMNAME: string;
+  ITEMTYPE: string;
+  ITEMCOST: number;
+  STATUS: string;
+  LOANDURATION: number;
+  Fee_Rate: number;
+}
 
 const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
   const { itemID, setItemID, setItemData, setIsItemAvailable, itemData, isItemAvailable } = useCheckout();
+  const [items, setItems] = useState<Item[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [inputValue, setInputValue] = useState("");
 
-  const handleSearchItem = async () => {
-    if (itemID.trim() === "") {
-      alert("Please enter Item ID.");
-      return;
-    }
-    try {
-        const response = await fetch(
-            `https://mis-565-backend-production.up.railway.app/items/${itemID}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-      const data = await response.json();
-      if (response.ok) {
-        setItemData(data);
-        setIsItemAvailable(data.STATUS === "AVAILABLE");
-        
-      } else {
-        alert("Item not found.");
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/items");
+        const data = await response.json();
+        console.log('Data', data)
+        setItems(data);
+      } catch (error) {
+        console.error("Error fetching items:", error);
       }
-    } catch {
-      alert("An error occurred. Please try again.");
+    };
+
+    fetchItems();
+  }, []);
+
+  
+
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+  
+    // Check if the entered value matches an item name in the list
+    const matchedItem = items.find((item) => item.ITEMNAME === value);
+    if (matchedItem) {
+      setSelectedItem(matchedItem);
+      setIsItemAvailable(matchedItem.STATUS === "AVAILABLE");
+    } else {
+      setSelectedItem(null); // Clear selection if no match
     }
   };
+  
+
 
   return (
     <>
       <div className="container">
         <div className="form-section">
           <h2 style={{ textDecorationColor: "black" }}>Search for Item</h2>
-          <div>
-            <label> Item ID: </label>
-            <input
-              type="text"
-              className="input-field"
-              placeholder="Enter Item ID"
-              value={itemID}
-              onChange={(e) => setItemID(e.target.value)}
-              required
-            />
-            <button onClick={handleSearchItem}>Search Item</button>
-          </div>
-
-          {/* Display Item Information */}
-          {itemData && (
-            <div className="item-info">
-              <p>
-                <strong>Item Name:</strong> {itemData.ITEMNAME}
-              </p>
-              <p>
-                <strong>Item Type:</strong> {itemData.ITEMTYPE}
-              </p>
-              <p>
-                <strong>Status:</strong> {itemData.STATUS}
-              </p>
-              
-              {isItemAvailable ? (
-                <p style={{ color: "green" }}>Item is available for checkout.</p>
-              ) : (
-                <p style={{ color: "red" }}>Item is not available for checkout.</p>
-              )}
-            </div>
+          
+          <Autocomplete 
+            label="Item Name" 
+            placeholder="Search for an item by name"
+            onInputChange={(value) => handleInputChange(value)}
+            value={inputValue}
+            className="max-w-xs"
+            color="primary"
+          >
+              {items.map((item) => (
+                <AutocompleteItem key={item.ITEMID} value={item.ITEMNAME}>
+                  {item.ITEMNAME}
+                </AutocompleteItem>
+              ))}
+          </Autocomplete>
+         
+          {/* Display selected item details */}
+          {selectedItem && (
+            <Card className="max-w-[300px] mx-auto mt-6">
+              <CardHeader className="flex gap-3">
+                  <p className="text-md font-semibold text-center">{selectedItem.ITEMNAME}</p>
+              </CardHeader>
+              <Divider/>
+              <CardBody>
+                <div className="flex flex-col gap-3">
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Type:</p>
+                    <p className="font-semibold">{selectedItem.ITEMTYPE}</p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Cost:</p>
+                    <p className="font-semibold">${selectedItem.ITEMCOST}</p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Status:</p>
+                    <p className={`font-semibold ${selectedItem.STATUS === "AVAILABLE" ? "text-success" : "text-danger"}`}>
+                      {selectedItem.STATUS}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Loan Duration:</p>
+                    <p className="font-semibold">{selectedItem.LOANDURATION} days</p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Fee Rate:</p>
+                    <p className="font-semibold">${selectedItem.Fee_Rate}/day</p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Checkout Eligibility:</p>
+                    <p className={`font-semibold ${isItemAvailable ? "text-success" : "text-danger"}`}>
+                      {isItemAvailable ? "Available" : "Not Available"}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           )}
 
           {/* Navigation Buttons */}
@@ -93,6 +140,9 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
           </div>
 
         </div>
+      </div>
+      <div>
+        
       </div>
     </>
   );

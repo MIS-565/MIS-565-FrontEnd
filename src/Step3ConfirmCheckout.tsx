@@ -14,7 +14,7 @@ const Step3ConfirmCheckout = ({ onPrevious, onFinish }: { onPrevious: () => void
 
 
     try {
-      const response = await fetch("https://mis-565-backend-production.up.railway.app/checkoutItem", {
+      const response = await fetch("http://localhost:5001/checkoutItem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ patronID, itemID }),

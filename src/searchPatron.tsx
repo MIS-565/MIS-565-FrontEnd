@@ -70,7 +70,7 @@ const SearchPatron: React.FC = () => {
           <label>Patron ID:</label>
           <input
             type="text"
-            className="input-field"
+            className="custom-input"
             placeholder="Enter Patron ID"
             value={patronID}
             onChange={handlePatronIDChange}
