@@ -1,5 +1,6 @@
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
+import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 
 const Step1PatronSearch = ({
   onNext,
@@ -26,12 +27,15 @@ const Step1PatronSearch = ({
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `http://localhost:5001/patrons/${patronID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
 
@@ -123,7 +127,7 @@ const Step1PatronSearch = ({
             <label> Patron ID: </label>
             <input
               type="text"
-              className="input-field"
+              className="custom-input"
               placeholder="Enter Patron ID"
               value={patronID}
               onChange={(e) => setPatronID(e.target.value)}
@@ -134,39 +138,49 @@ const Step1PatronSearch = ({
 
           {/* Display Patron Information */}
           {patronData && (
-            <div className="patron-info">
-              <p>
-                <strong>Name:</strong> {patronData.PATRONFName}{" "}
-                {patronData.PATRONLName}
-              </p>
-              <p>
-                <strong>Membership Status:</strong>{" "}
-                {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
-              </p>
-              <p>
-                <strong>Late Fees:</strong> $
-                {patronData.LFEE_BALANCE !== null
-                  ? patronData.LFEE_BALANCE
-                  : "0"}
-              </p>
-              <p>
-                <strong>Number of Checkouts:</strong>{" "}
-                {patronData.NUM_CHECKOUT !== null
-                  ? patronData.NUM_CHECKOUT
-                  : "0"}
-              </p>
-              {isEligible ? (
-                <p style={{ color: "green" }}>
-                  Patron is eligible for checkout.
-                </p>
-              ) : (
-                <p style={{ color: "red" }}>
-                  Patron is not eligible for checkout.
-                </p>
-              )}
+            <Card className="max-w-[400px] mx-auto mt-6">
+              <CardHeader className="flex gap-3">
+                  <p className="text-md font-semibold text-center">
+                    {patronData.PATRONFName} {patronData.PATRONLName}
+                  </p>
+              </CardHeader>
+              <Divider/>
+              <CardBody>
+                <div className="flex flex-col gap-3">
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Membership Status:</p>
+                    <p className={`font-semibold ${patronData.LBCD_isExpired === 0 ? "text-success" : "text-danger"}`}>
+                      {patronData.LBCD_isExpired === 0 ? "Active" : "Expired"}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Late Fees:</p>
+                    <p className="font-semibold">
+                      ${patronData.LFEE_BALANCE !== null ? patronData.LFEE_BALANCE : "0"}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Number of Checkouts:</p>
+                    <p className="font-semibold">
+                    {patronData.NUM_CHECKOUT !== null ? patronData.NUM_CHECKOUT : "0"}
+                    </p>
+                  </div>
+                  <Divider/>
+                  <div className="flex justify-between">
+                    <p className="text-default-500">Checkout Eligibility:</p>
+                    <p className={`font-semibold ${isEligible ? "text-success" : "text-danger"}`}>
+                      {isEligible ? "Eligible" : "Not Eligible"}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
 
-              {/* Display Clear Late Fees and Do Not Pay Late Fees buttons if there are outstanding fees */}
-              {parseFloat(patronData.LFEE_BALANCE) > 0 && (
+            </Card>
+          )}
+            {/* Display Clear Late Fees and Do Not Pay Late Fees buttons if there are outstanding fees */}
+            {patronData && parseFloat(patronData.LFEE_BALANCE) > 0 && (
                 <>
                   <button onClick={handleClearLateFees} style={{ marginTop: "10px" }}>
                     Clear Late Fees
@@ -181,7 +195,7 @@ const Step1PatronSearch = ({
               )}
 
               {/* Display Renew Membership button if membership is expired */}
-              {patronData.LBCD_isExpired === 1 && (
+              {patronData && patronData.LBCD_isExpired === 1 && (
                 <>
                 <button onClick={handleRenewMembership} style={{ marginTop: "10px" }}>
                   Renew Membership
@@ -194,9 +208,6 @@ const Step1PatronSearch = ({
                   </button>
                 </>
               )}
-            </div>
-          )}
-
           {/* Next and Reset Buttons */}
           <div className="button-container">
             <button

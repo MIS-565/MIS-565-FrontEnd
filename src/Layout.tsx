@@ -2,6 +2,7 @@
 import React, { ReactNode } from "react";
 import NavTabs from "./NavTabs";
 import "./Layout.css";
+import Logo from "./images/WPL.svg"
 
 interface LayoutProps {
   children: ReactNode; // Define the type of the children prop
@@ -12,7 +13,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div>
       <header className="header">
         <h1 className="header-title">
-          Wayback Public Library
+          <img src={Logo} alt="Wayback Public Library" className="logo" />
         </h1>
         <div className="nav-container">
           <NavTabs />

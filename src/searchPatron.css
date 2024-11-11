@@ -41,18 +41,21 @@ label {
     margin-bottom: 6px;
 }
 
-input[type="text"], .search-bar {
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: border-color 0.3s ease-in-out;
+.item-details {
+  margin-top: 30px;
+}
+.custom-input {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease-in-out;
 }
 
-input[type="text"]:focus, .search-bar:focus {
-    border-color: #007bff;
-    outline: none;
+.custom-input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
 button {
@@ -74,6 +77,10 @@ button {
     gap: 1px;
     margin-top: 80px;
     position: relative; /* This makes the container the reference for absolute positioning */
+  }
+
+  .step-container {
+    position: relative;
   }
   
   .back-button {

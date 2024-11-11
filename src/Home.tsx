@@ -1,42 +1,45 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./Home.css";
+import { FaUsersGear } from "react-icons/fa6";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import { BsArrowUpRightCircleFill } from "react-icons/bs";// Install react-icons if not already installed
 
-interface Item {
-  ITEMID: number;
-  ITEMNAME: string;
-  ITEMCOST: number;
-  ITEMTYPE: string;
-}
-
-const HomePage = () => {
-  const [availableItems, setAvailableItems] = useState<Item[]>([]);
-
-  useEffect(() => {
-    const fetchAvailableItems = async () => {
-      try {
-        const response = await fetch("http://localhost:5001/available-items");
-        const data = await response.json();
-        setAvailableItems(data); // Assuming the response is an array of item objects
-      } catch (error) {
-        console.error("Failed to fetch available items:", error);
-      }
-    };
-    fetchAvailableItems();
-  }, []);
-
+const HomePage: React.FC = () => {
   return (
-    <div className="home-page">
-      <div className="text-box">
-        Wayback Public Library The Wayback Public Library is a community
-        resource that provides access to a wide range of informational and
-        educational materials. It offers a diverse collection of books, e-books,
-        and digital media, catering to all age groups and interests. The library
-        hosts various programs and events, including workshops, reading clubs,
-        and educational sessions, promoting lifelong learning. Additionally, it
-        provides access to computers and internet resources, ensuring that all
-        community members can connect and engage with information. The Wayback
-        Public Library serves as a welcoming space for individuals and families
-        to explore, learn, and grow together.
+    <div className="home">
+      <div className="hero-section">
+        <div className="hero-content">
+          <h1 className="main-heading">Welcome to the Wayback Public Library System</h1>
+          <p className="sub-heading">
+            Empowering librarians with modern tools to provide seamless service, 
+            manage resources efficiently, and create an exceptional experience for our patrons
+          </p>
+        </div>
+      </div>
+
+      <div className="features-section">
+        <div className="feature-card patron-card">
+          <div className="card-header">
+            <FaUsersGear className="feature-icon" />
+            <h2>Patron Management</h2>
+          </div>
+          <p>Easily search, add, and manage patron information with our intuitive interface.</p>
+          <Link to="/search-patron" className="card-link">
+            <BsArrowUpRightCircleFill className="link-icon" />
+          </Link>
+        </div>
+
+        <div className="feature-card checkout-card">
+          <div className="card-header">
+            <MdOutlineShoppingCartCheckout className="feature-icon" />
+            <h2>Item Checkout</h2>
+          </div>
+          <p>Streamline the checkout process with our efficient system.</p>
+          <Link to="/Check-out" className="card-link">
+            <BsArrowUpRightCircleFill className="link-icon" />
+          </Link>
+        </div>
       </div>
     </div>
   );
