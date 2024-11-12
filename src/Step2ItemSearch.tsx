@@ -44,9 +44,13 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
     const matchedItem = items.find((item) => item.ITEMNAME === value);
     if (matchedItem) {
       setSelectedItem(matchedItem);
+      setItemData(matchedItem);
+      setItemID(matchedItem.ITEMID.toString());
       setIsItemAvailable(matchedItem.STATUS === "AVAILABLE");
     } else {
       setSelectedItem(null); // Clear selection if no match
+      setItemData(null); // Clear item data in context if no match
+      setItemID("");
     }
   };
   
