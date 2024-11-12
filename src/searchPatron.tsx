@@ -4,6 +4,9 @@ import NavTabs from "./NavTabs";
 
 const SearchPatron: React.FC = () => {
   const [patronID, setPatronID] = useState("");
+
+  const [patronItems, setPatronItems] = useState<any[]>([]);
+
   const [patronData, setPatronData] = useState<any>(null); // Store patron data after search
   const [isEligible, setIsEligible] = useState<boolean>(false); // Eligibility status for checkout
 
@@ -15,56 +18,67 @@ const SearchPatron: React.FC = () => {
   // Handle search logic for patron search
   const handleSearchPatron = async () => {
     if (patronID.trim() === "") {
-      alert("Please enter Patron ID.");
-      return;
+        alert("Please enter Patron ID.");
+        return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+        // Fetch patron data
+        const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        setPatronData(data);
+        if (response.ok) {
+            setPatronData(data);
 
-        // Check eligibility based on membership status, late fees, and number of checkouts
-        const now = new Date();
-        const issuedDate = new Date(data.LBCD_ISSUEDATE);
-        const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
-        const isMembershipActive =
-          issuedDate &&
-          expirationDate &&
-          now > issuedDate &&
-          now < expirationDate;
+            // Check eligibility based on membership status, late fees, and number of checkouts
+            const now = new Date();
+            const issuedDate = new Date(data.LBCD_ISSUEDATE);
+            const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
+            const isMembershipActive = issuedDate && expirationDate && now > issuedDate && now < expirationDate;
 
-        const eligible =
-          isMembershipActive &&
-          (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0) &&
-          data.NUM_CHECKOUT <= 20;
+            const eligible = isMembershipActive && (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0) && data.NUM_CHECKOUT <= 20;
+            setIsEligible(eligible);
 
-        setIsEligible(eligible);
-      } else {
-        alert("Patron not found.");
-        setPatronData(null);
-        setIsEligible(false);
-      }
+            // Fetch items associated with the patron
+            const itemsResponse = await fetch(`http://localhost:5001/patrons/${patronID}/items`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const itemsData = await itemsResponse.json();
+
+            if (itemsResponse.ok) {
+                setPatronItems(itemsData.items);
+            } else {
+                setPatronItems([]);
+            }
+        } else {
+            alert("Patron not found.");
+            setPatronData(null);
+            setPatronItems([]);
+            setIsEligible(false);
+        }
     } catch (error) {
-      console.error("Error during search:", error);
-      alert("An error occurred. Please try again.");
+        console.error("Error during search:", error);
+        alert("An error occurred. Please try again.");
     }
-  };
+};
 
   // Reset form fields and patron data
   const handleReset = () => {
     setPatronID("");
     setPatronData(null);
+    setPatronItems([]);
     setIsEligible(false);
-  };
+};
+
 
   return (
     <div className="container">
@@ -112,6 +126,20 @@ const SearchPatron: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* Display Patron's Checked-Out Items */}
+{patronItems.length > 0 && (
+    <div className="patron-items">
+        <h3>Checked-Out Items</h3>
+        <ul>
+            {patronItems.map((item, index) => (
+                <li key={index}>
+                    <strong>Item:</strong> {item.itemName}, <strong>Due Date:</strong> {new Date(item.dueDate).toLocaleDateString()}
+                </li>
+            ))}
+        </ul>
+    </div>
+)}
 
         {/* Reset Button */}
         <div className="button-container">
