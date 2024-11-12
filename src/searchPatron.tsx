@@ -9,6 +9,7 @@ const SearchPatron: React.FC = () => {
   const [isEligible, setIsEligible] = useState<boolean>(false);
   const [showAllItems, setShowAllItems] = useState<boolean>(false); // State to control "Show More"
   const [sortOption, setSortOption] = useState<string>("itemName"); // Sorting option
+  const [filterType, setFilterType] = useState<string>(""); // Empty means no filter applied
 
   // Handle sorting
   const sortedItems = [...patronItems].sort((a, b) => {
@@ -69,6 +70,7 @@ const SearchPatron: React.FC = () => {
           },
         });
         const itemsData = await itemsResponse.json();
+
   
         if (itemsResponse.ok) {
           setPatronItems(itemsData.items); // Make sure itemsData.items has the correct structure
@@ -86,6 +88,11 @@ const SearchPatron: React.FC = () => {
       alert("An error occurred. Please try again.");
     }
   };
+
+  const filteredItems = sortedItems.filter((item) => {
+    return filterType === "" || item.itemType === filterType;
+  });
+  
   
 
   const handleReset = () => {
@@ -138,6 +145,17 @@ const SearchPatron: React.FC = () => {
               <option value="itemName">Item Name</option>
               <option value="dueDate">Due Date</option>
             </select>
+
+            <label>Filter by Type:</label>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="Book">Book</option>
+              <option value="Movie">Movie</option>
+              <option value="Game">Game</option>
+            </select>
           </div>
         )}
 
@@ -146,17 +164,17 @@ const SearchPatron: React.FC = () => {
           <div className="patron-items">
             <h3>Checked-Out Items</h3>
             <ul>
-              {(showAllItems ? sortedItems : sortedItems.slice(0, 3)).map(
+              {(showAllItems ? filteredItems : filteredItems.slice(0, 3)).map(
                 (item, index) => (
                   <li key={index}>
-                    <strong>Item:</strong> {item.itemName}, <strong>Due Date:</strong>{" "}
+                    <strong>Item:</strong> {item.itemName}, <strong>Type:</strong> {item.itemType}, <strong>Due Date:</strong>{" "}
                     {new Date(item.dueDate).toLocaleDateString()}
                   </li>
                 )
               )}
             </ul>
             {/* Show More / Show Less Button */}
-            {patronItems.length > 3 && (
+            {filteredItems.length > 3 && (
               <button onClick={() => setShowAllItems(!showAllItems)}>
                 {showAllItems ? "Show Less" : "Show More"}
               </button>
