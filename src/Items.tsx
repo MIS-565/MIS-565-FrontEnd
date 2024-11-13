@@ -13,6 +13,7 @@ import {
 import { EditIcon } from "./components/icons/EditIcon";
 import { DeleteIcon } from "./components/icons/DeleteIcon";
 import { EyeIcon } from "./components/icons/EyeIcon";
+import { useNavigate } from "react-router-dom";
 
 interface Item {
   ITEMID: number;
@@ -35,8 +36,9 @@ const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const Items:  React.FC = () => {
+const Items: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -112,9 +114,19 @@ const Items:  React.FC = () => {
     }
   };
 
+  const handleBackToHome = () => {
+    navigate("/");
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Library Items</h1>
+
+      {/* Back to Home Page button */}
+      <button onClick={handleBackToHome} className="back-to-home-button">
+        Back to Home Page
+      </button>
+
       <Table aria-label="Items table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
@@ -138,6 +150,6 @@ const Items:  React.FC = () => {
       </Table>
     </div>
   );
-} 
+};
 
 export default Items;
