@@ -15,7 +15,6 @@ const CheckoutPage: React.FC = () => {
     // Add any other reset logic here, if needed
   };
 
-
   return (
     <CheckoutProvider>
       <div className="container">

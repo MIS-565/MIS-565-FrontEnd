@@ -1,0 +1,22 @@
+.patron-page-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Adjust the tab content padding */
+.tab-content {
+  padding: 24px 0;
+}
+
+/* Override any conflicting button styles for tabs */
+[data-slot="tab"] {
+  all: unset;  /* Reset all styles */
+  cursor: pointer;
+}
+
+/* If needed, you can add specific styles for the tab buttons */
+[data-slot="tab"] {
+  padding: 8px 16px;
+  transition: color 0.2s ease;
+} 
