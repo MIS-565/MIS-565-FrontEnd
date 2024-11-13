@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./searchPatron.css";
 import NavTabs from "./NavTabs";
+import { Input } from "@nextui-org/react";
 
 const SearchPatron: React.FC = () => {
   const [patronID, setPatronID] = useState("");
@@ -33,7 +34,7 @@ const SearchPatron: React.FC = () => {
   
     try {
       // Fetch patron data
-      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,7 @@ const SearchPatron: React.FC = () => {
         setIsEligible(eligible);
   
         // Fetch items associated with the patron
-        const itemsResponse = await fetch(`http://localhost:5001/patrons/${patronID}/items`, {
+        const itemsResponse = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}/items`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -107,18 +108,19 @@ const SearchPatron: React.FC = () => {
     <div className="container">
       <div className="form-section">
         <h2>Search Patron Information</h2>
-        <div>
-          <label>Patron ID:</label>
-          <input
+        <div className="flex flex-col items-center w-full gap-4">
+          <Input
             type="text"
-            className="custom-input"
+            label="Patron ID"
             placeholder="Enter Patron ID"
             value={patronID}
             onChange={handlePatronIDChange}
+            variant="bordered"
+            className="max-w-xs mb-4"
             required
           />
-          <button onClick={handleSearchPatron}>Search Patron</button>
-        </div>
+      <button onClick={handleSearchPatron}>Search Patron</button>
+    </div>
 
         {patronData && (
           <div className="patron-info">

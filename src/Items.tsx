@@ -43,7 +43,7 @@ const Items: React.FC = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("http://localhost:5001/items");
+        const response = await fetch("https://mis-565-backend-production.up.railway.app/items");
         const data = await response.json();
         setItems(data);
       } catch (error) {

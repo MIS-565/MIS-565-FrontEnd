@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./NavTabs.css";
+// Import the new button styles
 
 const NavTabs: React.FC = () => {
   const location = useLocation();
@@ -15,24 +16,24 @@ const NavTabs: React.FC = () => {
       </Link>
       
       <Link 
-        to="/search-patron" 
-        className={`nav-link ${location.pathname === "/search-patron" ? "active" : ""}`}
+        to="/patron" 
+        className={`nav-link ${location.pathname === "/patron" ? "active" : ""}`}
       >
-        <button className="button">Search Patron</button>
+        <button className="button">Patron Management</button>
       </Link>
       
       <Link 
         to="/Check-out" 
         className={`nav-link ${location.pathname === "/Check-out" ? "active" : ""}`}
       >
-        <button className="button">Check Out Items</button>
+        <button className="button">Check Out</button>
       </Link>
       
       <Link 
-        to="/Add-patron" 
-        className={`nav-link ${location.pathname === "/Add-patron" ? "active" : ""}`}
+        to="/items" 
+        className={`nav-link ${location.pathname === "/items" ? "active" : ""}`}
       >
-        <button className="button">Add Patron</button>
+        <button className="button">Items</button>
       </Link>
     </div>
   );

@@ -130,6 +130,8 @@ body {
   background: rgba(254, 249, 195, 0.9); /* #fef9c3 with some transparency */
 }
 
+
+
 /* Update hover effects if needed */
 .patron-card:hover {
   transform: translateY(-5px);
@@ -137,6 +139,11 @@ body {
 }
 
 .checkout-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+}
+
+.items-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
 }

@@ -1,11 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Home";
-import SearchPatron from "./searchPatron";
 import CheckoutPage from "./CheckoutPage";
+import PatronPage from "./PatronPage";
 import Items from "./Items";
 import Layout from "./Layout";
-import AddPatronPage from "./AddPatronPage";
 import { NextUIProvider } from "@nextui-org/react";
 
 const App: React.FC = () => {
@@ -15,11 +14,10 @@ const App: React.FC = () => {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/search-patron" element={<SearchPatron />} />
+            <Route path="/patron" element={<PatronPage />} />
             <Route path="/Check-out" element={<CheckoutPage />} />
             <Route path="/items" element={<Items />} />
-            <Route path="/Add-Patron" element={<AddPatronPage />} />
-        </Routes>
+          </Routes>
         </Layout>
       </Router>
     </NextUIProvider>

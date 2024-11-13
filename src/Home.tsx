@@ -20,6 +20,19 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="features-section">
+
+        {/* View All Items Feature Card */}
+        <div className="feature-card items-card">
+          <div className="card-header">
+            <IoLibrary className="feature-icon" /> {/* Adjust icon as needed */}
+            <h2>View All Items</h2>
+          </div>
+          <p>Browse through the library's entire collection.</p>
+          <Link to="/items" className="card-link">
+            <BsArrowUpRightCircleFill className="link-icon" />
+          </Link>
+        </div>
+        
         {/* Patron Management Feature Card */}
         <div className="feature-card patron-card">
           <div className="card-header">
@@ -44,17 +57,7 @@ const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        {/* View All Items Feature Card */}
-        <div className="feature-card items-card">
-          <div className="card-header">
-            <IoLibrary className="feature-icon" /> {/* Adjust icon as needed */}
-            <h2>View All Items</h2>
-          </div>
-          <p>Browse through the library's entire collection.</p>
-          <Link to="/items" className="card-link">
-            <BsArrowUpRightCircleFill className="link-icon" />
-          </Link>
-        </div>
+        
       </div>
     </div>
   );

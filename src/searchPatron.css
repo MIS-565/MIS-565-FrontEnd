@@ -79,6 +79,10 @@ button {
     position: relative; /* This makes the container the reference for absolute positioning */
   }
 
+  button:hover {
+    background-color: #0056b3;
+}
+
   .step-container {
     position: relative;
   }
@@ -203,9 +207,6 @@ button {
     background-color: #0056b3;
   }
 
-button:hover {
-    background-color: #0056b3;
-}
 
 .search-button {
     background-color: #007bff;

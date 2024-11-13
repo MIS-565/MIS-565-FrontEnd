@@ -1,6 +1,6 @@
 import React from "react";
 import { useCheckout } from "./CheckoutContext";
-import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Divider, Input } from "@nextui-org/react";
 
 const Step1PatronSearch = ({
   onNext,
@@ -28,7 +28,7 @@ const Step1PatronSearch = ({
     }
     try {
       const response = await fetch(
-        `http://localhost:5001/patrons/${patronID}`,
+        `https://mis-565-backend-production.up.railway.app/patrons/${patronID}`,
         {
           method: "GET",
           headers: {
@@ -74,7 +74,7 @@ const Step1PatronSearch = ({
 
   const handleClearLateFees = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/patrons/${patronID}/clear-late-fees`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}/clear-late-fees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const Step1PatronSearch = ({
 
   const handleRenewMembership = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/patrons/${patronID}/renew-membership`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}/renew-membership`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,14 +123,15 @@ const Step1PatronSearch = ({
           <h2 style={{ textDecorationColor: "black" }}>
             Start Checkout Process By Searching For Patron
           </h2>
-          <div>
-            <label> Patron ID: </label>
-            <input
+          <div className="flex flex-col items-center w-full gap-4">
+            <Input
               type="text"
-              className="custom-input"
+              label="Patron ID"
               placeholder="Enter Patron ID"
               value={patronID}
               onChange={(e) => setPatronID(e.target.value)}
+              variant="bordered"
+              className="max-w-xs"
               required
             />
             <button onClick={handleSearchPatron}>Search Patron</button>

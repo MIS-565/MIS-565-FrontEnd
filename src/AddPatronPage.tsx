@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./AddPatronPage.css";
+import { Input } from "@nextui-org/react";
 
 const AddPatron = () => {
   const [firstName, setFirstName] = useState("");
@@ -32,7 +33,7 @@ const AddPatron = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5001/patrons", {
+      const response = await fetch("https://mis-565-backend-production.up.railway.app/patrons", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,41 +69,53 @@ const AddPatron = () => {
           e.preventDefault();
           handleAddPatron();
         }}
-        className="patron-form"
+        className="patron-form flex flex-col items-center w-full gap-4"
       >
-        <div className="form-group">
-          <label>First Name:</label>
-          <input
+        <div className="form-group flex flex-col items-center w-full">
+          <Input
             type="text"
+            label="First Name"
+            placeholder="Enter first name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            variant="bordered"
+            className="max-w-xs mb-4"
             required
           />
         </div>
-        <div className="form-group">
-          <label>Last Name:</label>
-          <input
+        <div className="form-group flex flex-col items-center w-full">
+          <Input
             type="text"
+            label="Last Name"
+            placeholder="Enter last name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            variant="bordered"
+            className="max-w-xs mb-4"
             required
           />
         </div>
-        <div className="form-group">
-          <label>Address:</label>
-          <input
+        <div className="form-group flex flex-col items-center w-full">
+          <Input
             type="text"
+            label="Address"
+            placeholder="Enter address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            variant="bordered"
+            className="max-w-xs mb-4"
             required
           />
         </div>
-        <div className="form-group">
-          <label>Email:</label>
-          <input
+        <div className="form-group flex flex-col items-center w-full">
+          <Input
             type="email"
+            label="Email"
+            placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            variant="bordered"
+            className="max-w-xs mb-4"
             required
           />
         </div>
