@@ -37,7 +37,7 @@ const CheckoutPage: React.FC = () => {
       alert("Please enter Patron ID.");
       return;
     }
-  
+
     try {
       const response = await fetch(
         `http://localhost:5001/patrons/${patronID}`,
@@ -48,29 +48,37 @@ const CheckoutPage: React.FC = () => {
           },
         }
       );
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setPatronData(data); // Set patron data
         const now = new Date();
         const issuedDate = new Date(data.LBCD_ISSUEDATE);
         const expirationDate = new Date(data.LBCD_EXPIRATIONDATE);
-        const isMembershipActive = issuedDate && expirationDate && now > issuedDate && now < expirationDate;
-  
+        const isMembershipActive =
+          issuedDate &&
+          expirationDate &&
+          now > issuedDate &&
+          now < expirationDate;
+
         // Determine if membership is considered active
-        const eligible = isMembershipActive && (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0);
+        const eligible =
+          isMembershipActive &&
+          (data.LFEE_BALANCE === null || parseFloat(data.LFEE_BALANCE) === 0);
         setIsEligible(eligible);
 
-        console.log("Is Eligible:", eligible); 
-  
+        console.log("Is Eligible:", eligible);
+
         if (!eligible) {
           alert(
             `Patron is not eligible for checkout. ${
-              !isMembershipActive
-                ? "Membership is not active."
+              !isMembershipActive ? "Membership is not active." : ""
+            } ${
+              data.LFEE_BALANCE !== null && parseFloat(data.LFEE_BALANCE) > 0
+                ? "Outstanding late fees."
                 : ""
-            } ${data.LFEE_BALANCE !== null && parseFloat(data.LFEE_BALANCE) > 0 ? "Outstanding late fees." : ""}`
+            }`
           );
         }
       } else {
@@ -88,20 +96,17 @@ const CheckoutPage: React.FC = () => {
       alert("Please enter an Item ID.");
       return;
     }
-  
+
     try {
-      const response = await fetch(
-        `http://localhost:5001/items/${itemID}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`http://localhost:5001/items/${itemID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
-  
+
       if (response.ok) {
         setItemData(data); // Set item data
         const available = data.STATUS === "AVAILABLE";
@@ -118,7 +123,6 @@ const CheckoutPage: React.FC = () => {
       alert("An error occurred. Please try again.");
     }
   };
-  
 
   // Handle checkout logic
   const handleCheckout = async () => {
@@ -129,29 +133,25 @@ const CheckoutPage: React.FC = () => {
 
     try {
       // Send patron ID and item ID to the backend for checkout
-      const response = await fetch(
-        "http://localhost:5001/checkoutItem",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ patronID, itemID }),
-        }
-      );
+      const response = await fetch("http://localhost:5001/checkoutItem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ patronID, itemID }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-
         const formattedDueDate = new Date(data.transaction.DueDate)
-        .toISOString()
-        .split("T")[0];
+          .toISOString()
+          .split("T")[0];
 
         setCheckoutInfo({
           patronName: `${patronData?.PATRONFName} ${patronData?.PATRONLName}`,
           itemName: itemData?.ITEMNAME || "",
-          dueDate: formattedDueDate,  // Assuming the backend returns dueDate in the response
+          dueDate: formattedDueDate, // Assuming the backend returns dueDate in the response
         });
 
         alert(
@@ -194,7 +194,8 @@ const CheckoutPage: React.FC = () => {
           {patronData && (
             <div className="patron-info">
               <p>
-                <strong>Name:</strong> {patronData.PATRONFName} {patronData.PATRONLName}
+                <strong>Name:</strong> {patronData.PATRONFName}{" "}
+                {patronData.PATRONLName}
               </p>
               <p>
                 <strong>Membership Status:</strong>{" "}
@@ -204,9 +205,13 @@ const CheckoutPage: React.FC = () => {
                 <strong>Late Fees:</strong> ${patronData.LFEE_BALANCE}
               </p>
               {isEligible ? (
-                <p style={{ color: "green" }}>Patron is eligible for checkout.</p>
+                <p style={{ color: "green" }}>
+                  Patron is eligible for checkout.
+                </p>
               ) : (
-                <p style={{ color: "red" }}>Patron is not eligible for checkout.</p>
+                <p style={{ color: "red" }}>
+                  Patron is not eligible for checkout.
+                </p>
               )}
             </div>
           )}
@@ -234,9 +239,13 @@ const CheckoutPage: React.FC = () => {
                 <strong>Status:</strong> {itemData.STATUS}
               </p>
               {isItemAvailable ? (
-                <p style={{ color: "green" }}>Item is available for checkout.</p>
+                <p style={{ color: "green" }}>
+                  Item is available for checkout.
+                </p>
               ) : (
-                <p style={{ color: "red" }}>Item is not available for checkout.</p>
+                <p style={{ color: "red" }}>
+                  Item is not available for checkout.
+                </p>
               )}
             </div>
           )}
@@ -264,7 +273,6 @@ const CheckoutPage: React.FC = () => {
               </p>
             </div>
           )}
-
         </div>
       </div>
     </>
@@ -272,4 +280,3 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
-
