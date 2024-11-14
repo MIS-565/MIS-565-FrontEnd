@@ -1,7 +1,7 @@
 // Step2ItemSearch.tsx
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useCheckout } from "./CheckoutContext";
-import {Autocomplete, AutocompleteItem} from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 
 interface Item {
@@ -19,13 +19,13 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
   const [items, setItems] = useState<Item[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [searchMode, setSearchMode] = useState("name"); // New state to toggle between name and ID search
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("https://mis-565-backend-production.up.railway.app/items");
+        const response = await fetch("http://localhost:5001/items");
         const data = await response.json();
-        console.log('Data', data)
         setItems(data);
       } catch (error) {
         console.error("Error fetching items:", error);
@@ -35,13 +35,16 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
     fetchItems();
   }, []);
 
-  
-
   const handleInputChange = (value: string) => {
     setInputValue(value);
-  
-    // Check if the entered value matches an item name in the list
-    const matchedItem = items.find((item) => item.ITEMNAME === value);
+
+    let matchedItem;
+    if (searchMode === "name") {
+      matchedItem = items.find((item) => item.ITEMNAME === value);
+    } else if (searchMode === "id") {
+      matchedItem = items.find((item) => item.ITEMID.toString() === value);
+    }
+
     if (matchedItem) {
       setSelectedItem(matchedItem);
       setItemData(matchedItem);
@@ -53,66 +56,87 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
       setItemID("");
     }
   };
-  
-
 
   return (
     <>
       <div className="container">
         <div className="form-section">
           <h2 style={{ textDecorationColor: "black" }}>Search for Item</h2>
-          
-          <Autocomplete 
-            label="Item Name" 
-            placeholder="Search for an item by name"
+
+          {/* Toggle between search by name or ID */}
+          <div className="search-mode-toggle">
+            <label>
+              <input
+                type="radio"
+                value="name"
+                checked={searchMode === "name"}
+                onChange={() => setSearchMode("name")}
+              />
+              Search by Name
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="id"
+                checked={searchMode === "id"}
+                onChange={() => setSearchMode("id")}
+              />
+              Search by ID
+            </label>
+          </div>
+
+          {/* Autocomplete input for name or ID based on search mode */}
+          <Autocomplete
+            label={searchMode === "name" ? "Item Name" : "Item ID"}
+            placeholder={searchMode === "name" ? "Search for an item by name" : "Search for an item by ID"}
             onInputChange={(value) => handleInputChange(value)}
             value={inputValue}
             className="max-w-xs"
             color="primary"
           >
-              {items.map((item) => (
-                <AutocompleteItem key={item.ITEMID} value={item.ITEMNAME}>
-                  {item.ITEMNAME}
-                </AutocompleteItem>
-              ))}
+            {items.map((item) => (
+              <AutocompleteItem key={item.ITEMID} value={searchMode === "name" ? item.ITEMNAME : item.ITEMID.toString()}>
+                {searchMode === "name" ? item.ITEMNAME : item.ITEMID.toString()}
+              </AutocompleteItem>
+            ))}
           </Autocomplete>
-         
+
           {/* Display selected item details */}
           {selectedItem && (
             <Card className="max-w-[300px] mx-auto mt-6">
               <CardHeader className="flex gap-3">
-                  <p className="text-md font-semibold text-center">{selectedItem.ITEMNAME}</p>
+                <p className="text-md font-semibold text-center">{selectedItem.ITEMNAME}</p>
               </CardHeader>
-              <Divider/>
+              <Divider />
               <CardBody>
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between">
                     <p className="text-default-500">Type:</p>
                     <p className="font-semibold">{selectedItem.ITEMTYPE}</p>
                   </div>
-                  <Divider/>
+                  <Divider />
                   <div className="flex justify-between">
                     <p className="text-default-500">Cost:</p>
                     <p className="font-semibold">${selectedItem.ITEMCOST}</p>
                   </div>
-                  <Divider/>
+                  <Divider />
                   <div className="flex justify-between">
                     <p className="text-default-500">Status:</p>
                     <p className={`font-semibold ${selectedItem.STATUS === "AVAILABLE" ? "text-success" : "text-danger"}`}>
                       {selectedItem.STATUS}
                     </p>
                   </div>
-                  <Divider/>
+                  <Divider />
                   <div className="flex justify-between">
                     <p className="text-default-500">Loan Duration:</p>
                     <p className="font-semibold">{selectedItem.LOANDURATION} days</p>
                   </div>
-                  <Divider/>
+                  <Divider />
                   <div className="flex justify-between">
                     <p className="text-default-500">Fee Rate:</p>
                     <p className="font-semibold">${selectedItem.Fee_Rate}/day</p>
                   </div>
-                  <Divider/>
+                  <Divider />
                   <div className="flex justify-between">
                     <p className="text-default-500">Checkout Eligibility:</p>
                     <p className={`font-semibold ${isItemAvailable ? "text-success" : "text-danger"}`}>
@@ -145,9 +169,6 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
             </button>
           </div>
         </div>
-      </div>
-      <div>
-        
       </div>
     </>
   );

@@ -33,7 +33,7 @@ const AddPatron = () => {
     };
 
     try {
-      const response = await fetch("https://mis-565-backend-production.up.railway.app/patrons", {
+      const response = await fetch("http://localhost:5001/patrons", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
