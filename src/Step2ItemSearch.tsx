@@ -31,13 +31,11 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
         console.error("Error fetching items:", error);
       }
     };
-
     fetchItems();
   }, []);
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
-
     let matchedItem;
     if (searchMode === "name") {
       matchedItem = items.find((item) => item.ITEMNAME === value);
@@ -85,7 +83,6 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
             </label>
           </div>
 
-          {/* Autocomplete input for name or ID based on search mode */}
           <Autocomplete
             label={searchMode === "name" ? "Item Name" : "Item ID"}
             placeholder={searchMode === "name" ? "Search for an item by name" : "Search for an item by ID"}
@@ -106,10 +103,10 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
             <Card className="max-w-[300px] mx-auto mt-6">
               <CardHeader className="flex gap-3">
                 <p className="text-md font-semibold text-center">{selectedItem.ITEMNAME}</p>
-              </CardHeader>
-              <Divider />
-              <CardBody>
-                <div className="flex flex-col gap-3">
+                  </CardHeader>
+                  <Divider />
+                  <CardBody>
+                    <div className="flex flex-col gap-3">
                   <div className="flex justify-between">
                     <p className="text-default-500">Type:</p>
                     <p className="font-semibold">{selectedItem.ITEMTYPE}</p>
@@ -143,9 +140,9 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
                       {isItemAvailable ? "Available" : "Not Available"}
                     </p>
                   </div>
-                </div>
-              </CardBody>
-            </Card>
+                    </div>
+                  </CardBody>
+                </Card>
           )}
 
           {/* Navigation Buttons */}

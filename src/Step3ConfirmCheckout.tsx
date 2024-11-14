@@ -28,27 +28,27 @@ const Step3ConfirmCheckout = ({
     }
 
     try {
-      const response = await fetch("http://localhost:5001/checkoutItem", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        const response = await fetch("http://localhost:5001/checkoutItem", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ patronID, itemID }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        const formattedDueDate = new Date(data.transaction.DueDate)
-          .toISOString()
-          .split("T")[0];
+        });
+        const data = await response.json();
+        if (response.ok) {
+          const formattedDueDate = new Date(data.transaction.DueDate)
+            .toISOString()
+            .split("T")[0];
 
         setCheckoutInfo({
-          patronName: `${patronData?.PATRONFName} ${patronData?.PATRONLName}`,
+              patronName: `${patronData?.PATRONFName} ${patronData?.PATRONLName}`,
           itemName: itemData?.ITEMNAME || "",
-          dueDate: formattedDueDate,
+              dueDate: formattedDueDate,
           itemType: itemData?.ITEMTYPE || "", // Assuming the backend returns dueDate in the response
         });
 
         setIsCheckoutComplete(true);
         alert("Checkout completed successfully.");
-      } else {
+        } else {
         alert("Failed to checkout.");
       }
     } catch {
@@ -80,20 +80,20 @@ const Step3ConfirmCheckout = ({
             <>
               {/* Display Checkout Summary after checkout is complete */}
               <div className="checkout-info">
-                <h3>Checkout Summary</h3>
-                <p>
+              <h3>Checkout Summary</h3>
+                  <p>
                   <strong>Patron:</strong> {checkoutInfo?.patronName}
-                </p>
-                <p>
+                  </p>
+                  <p>
                   <strong>Item:</strong> {checkoutInfo?.itemName}
-                </p>
-                <p>
+                  </p>
+                  <p>
                   <strong>Item Type:</strong> {checkoutInfo?.itemType}
                 </p>
                 <p>
                   <strong>Due Date:</strong> {checkoutInfo?.dueDate}
-                </p>
-              </div>
+                  </p>
+                </div>
             </>
           )}
 
