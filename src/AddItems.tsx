@@ -36,6 +36,7 @@ const AddItem = () => {
 
   const handleAddItem = async () => {
     const newItemData = {
+      ITEMID: itemID,
       ITEMTYPE: itemType,
       ITEMNAME: itemName,
       ITEMCOST: parseFloat(itemCost),
@@ -50,7 +51,7 @@ const AddItem = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newItemData),
+        body: JSON.stringify(newItemData.ITEMID),
       });
 
       if (response.ok) {
