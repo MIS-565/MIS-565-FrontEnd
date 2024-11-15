@@ -129,7 +129,6 @@ const AddPatron = () => {
         <div className="popup-overlay">
           <div className="popup">
             <h3>New Patron Created!</h3>
-            <p>New Patron ID: {patronID}</p>
           </div>
           {/* Display the patron ID after successfully adding */}
           {patronID && (
