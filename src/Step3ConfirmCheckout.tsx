@@ -14,7 +14,7 @@ const Step3ConfirmCheckout = ({
     itemData,
     setCheckoutInfo,
     patronID,
-    itemID,
+    itemIDs,
     checkoutInfo,
     isCheckoutComplete,
     setIsCheckoutComplete,
@@ -22,33 +22,52 @@ const Step3ConfirmCheckout = ({
   } = useCheckout();
 
   const handleCheckout = async () => {
-    if (patronID.trim() === "" || itemID.trim() === "") {
-      alert("Please enter both Patron ID and Item ID.");
+    if (patronID.trim() === "" || itemIDs.length === 0) {
+      alert("Please enter Patron ID and select at least one item.");
       return;
     }
 
+    const maxCheckoutLimit = 20;
+    const currentCheckedOut = patronData?.NUM_CHECKOUT || 0;
+    const itemsToCheckout = itemIDs.length; // Number of items selected for this checkout
+
+    // Check if the total checkout would exceed the max limit
+    if (currentCheckedOut + itemsToCheckout > maxCheckoutLimit) {
+      const allowedCheckout = maxCheckoutLimit - currentCheckedOut;
+      alert(
+        `You are only allowed to check out ${allowedCheckout} more item(s). Please adjust your selection.`
+      );
+      return;
+    }
+
+    const uniqueItemIDs = Array.from(new Set(itemIDs)).slice(0, 3);
+    const uniqueItemData = Array.from(new Set(itemData.map(item => item.ITEMID)))
+      .map(id => itemData.find(item => item.ITEMID === id))
+      .slice(0, 3);
+
     try {
-        const response = await fetch("http://localhost:5001/checkoutItem", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ patronID, itemID }),
-        });
-        const data = await response.json();
-        if (response.ok) {
-          const formattedDueDate = new Date(data.transaction.DueDate)
-            .toISOString()
-            .split("T")[0];
+      const response = await fetch("http://localhost:5001/checkoutItems", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ patronID, itemIDs: uniqueItemIDs }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const formattedDueDates = data.transactions.map((transaction: any) =>
+          new Date(transaction.DueDate).toISOString().split("T")[0]
+        );
 
-        setCheckoutInfo({
-              patronName: `${patronData?.PATRONFName} ${patronData?.PATRONLName}`,
-          itemName: itemData?.ITEMNAME || "",
-              dueDate: formattedDueDate,
-          itemType: itemData?.ITEMTYPE || "", // Assuming the backend returns dueDate in the response
-        });
+        const newCheckoutInfo = uniqueItemData.map((item, index) => ({
+          patronName: `${patronData?.PATRONFName} ${patronData?.PATRONLName}`,
+          itemName: item?.ITEMNAME || "",
+          dueDate: formattedDueDates[index],
+          itemType: item?.ITEMTYPE || "",
+        }));
 
+        setCheckoutInfo(newCheckoutInfo);
         setIsCheckoutComplete(true);
         alert("Checkout completed successfully.");
-        } else {
+      } else {
         alert("Failed to checkout.");
       }
     } catch {
@@ -61,6 +80,11 @@ const Step3ConfirmCheckout = ({
     onFinish(); // Trigger the function to go back to step 1
   };
 
+  // Define uniqueItemData here for rendering
+  const uniqueItemData = Array.from(new Set(itemData.map(item => item.ITEMID)))
+    .map(id => itemData.find(item => item.ITEMID === id))
+    .slice(0, 3);
+
   return (
     <>
       <div className="container">
@@ -71,29 +95,43 @@ const Step3ConfirmCheckout = ({
             <>
               {/* Display the checkout preparation text and Complete Checkout button */}
               <p>
-                Ready to checkout '{itemData?.ITEMNAME}' for{" "}
-                {patronData?.PATRONFName} {patronData?.PATRONLName}
+                Ready to checkout the following items for {patronData?.PATRONFName} {patronData?.PATRONLName}:
               </p>
-              <button onClick={handleCheckout}>Complete Checkout</button>
+              <ul>
+              {uniqueItemData.map((item, index) => (
+                  <li key={index}>{item?.ITEMNAME}</li>
+                ))}
+              </ul>
+              <button 
+                  onClick={handleCheckout} 
+                  style={{ backgroundColor: "green", color: "white", padding: "10px 20px", borderRadius: "5px", border: "none" }}
+                >
+                  Complete Checkout
+                </button>
             </>
           ) : (
             <>
               {/* Display Checkout Summary after checkout is complete */}
               <div className="checkout-info">
-              <h3>Checkout Summary</h3>
-                  <p>
-                  <strong>Patron:</strong> {checkoutInfo?.patronName}
-                  </p>
-                  <p>
-                  <strong>Item:</strong> {checkoutInfo?.itemName}
-                  </p>
-                  <p>
-                  <strong>Item Type:</strong> {checkoutInfo?.itemType}
-                </p>
-                <p>
-                  <strong>Due Date:</strong> {checkoutInfo?.dueDate}
-                  </p>
-                </div>
+                <h3>Checkout Summary</h3>
+                {checkoutInfo.map((info, index) => (
+                  <div key={index}>
+                    <p>
+                      <strong>Patron:</strong> {info.patronName}
+                    </p>
+                    <p>
+                      <strong>Item:</strong> {info.itemName}
+                    </p>
+                    <p>
+                      <strong>Item Type:</strong> {info.itemType}
+                    </p>
+                    <p>
+                      <strong>Due Date:</strong> {info.dueDate}
+                    </p>
+                    <hr />
+                  </div>
+                ))}
+              </div>
             </>
           )}
 

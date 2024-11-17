@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
             <h2>Patron Management</h2>
           </div>
           <p>Easily search, add, and manage patron information with our intuitive interface.</p>
-          <Link to="/search-patron" className="card-link">
+          <Link to="/patron" className="card-link">
             <BsArrowUpRightCircleFill className="link-icon" />
           </Link>
         </div>

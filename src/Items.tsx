@@ -38,6 +38,8 @@ const columns = [
 
 const Items: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
+  const [filterType, setFilterType] = useState<string>("All");
+  const [statusFilter, setStatusFilter] = useState<string>("Any");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,15 +56,36 @@ const Items: React.FC = () => {
     fetchItems();
   }, []);
 
+  const handleFilterChange = (type: string) => {
+    setFilterType(type);
+  };
+
+  const handleStatusFilterChange = (status: string) => {
+    setStatusFilter(status);
+  };
+
+  const filteredItems = items.filter(item => {
+    const matchesType = filterType === "All" || item.ITEMTYPE === filterType;
+    const matchesStatus = 
+      statusFilter === "Any" ||
+      (statusFilter === "Available" && item.STATUS === "AVAILABLE") ||
+      (statusFilter === "Checked In" && item.STATUS === "CHECKED IN") ||
+      (statusFilter === "Checked Out" && item.STATUS === "CHECKED OUT");
+    
+    return matchesType && matchesStatus;
+  });
+
   const renderCell = (item: Item, columnKey: React.Key) => {
     const cellValue = item[columnKey as keyof Item];
 
     switch (columnKey) {
       case "STATUS":
+        const chipColor = item.STATUS === "AVAILABLE" ? "success" :
+                          item.STATUS === "CHECKED OUT" ? "danger" : "warning";
         return (
           <Chip 
             className="capitalize" 
-            color={item.STATUS === "AVAILABLE" ? "success" : "danger"}
+            color={chipColor}
             size="sm"
             variant="flat"
           >
@@ -120,13 +143,97 @@ const Items: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Library Items</h1>
+    {/* Header Section with Title on the left and Button on the right */}
+    <div className="flex justify-between items-center mb-6">
+      <h1 className="text-2xl font-bold">Library Items</h1>
+      <div className="ml-auto"> {/* This div will ensure alignment to the far right */}
+        <button onClick={handleBackToHome} className="back-to-home-button">
+          Back to Home Page
+        </button>
+      </div>
+    </div>
 
-      {/* Back to Home Page button */}
-      <button onClick={handleBackToHome} className="back-to-home-button">
-        Back to Home Page
-      </button>
+      {/* Filter Section */}
+      <div className="flex gap-4 mb-6">
+        <label>
+          <input 
+            type="radio" 
+            value="All" 
+            checked={filterType === "All"} 
+            onChange={() => handleFilterChange("All")} 
+          />
+          All
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="Book" 
+            checked={filterType === "Book"} 
+            onChange={() => handleFilterChange("Book")} 
+          />
+          Book
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="Movie" 
+            checked={filterType === "Movie"} 
+            onChange={() => handleFilterChange("Movie")} 
+          />
+          Movie
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="Game" 
+            checked={filterType === "Game"} 
+            onChange={() => handleFilterChange("Game")}
+          />
+          Game
+        </label>
+      </div>
 
+      {/* Status Filter Section */}
+      <div className="flex gap-4 mb-6">
+        <label>
+          <input 
+            type="radio" 
+            value="Any" 
+            checked={statusFilter === "Any"} 
+            onChange={() => handleStatusFilterChange("Any")} 
+          />
+          Any
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="Available" 
+            checked={statusFilter === "Available"} 
+            onChange={() => handleStatusFilterChange("Available")} 
+          />
+          Available
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="Checked In" 
+            checked={statusFilter === "Checked In"} 
+            onChange={() => handleStatusFilterChange("Checked In")} 
+          />
+          Checked In
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="Checked Out" 
+            checked={statusFilter === "Checked Out"} 
+            onChange={() => handleStatusFilterChange("Checked Out")} 
+          />
+          Checked Out
+        </label>
+      </div>
+
+      {/* Items Table */}
       <Table aria-label="Items table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
@@ -138,7 +245,7 @@ const Items: React.FC = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody items={filteredItems}>
           {(item) => (
             <TableRow key={item.ITEMID}>
               {(columnKey) => (
