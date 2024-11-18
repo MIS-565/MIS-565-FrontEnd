@@ -146,6 +146,8 @@ const Items: React.FC = () => {
   };
 
   return (
+
+    
     <div className="p-6">
     {/* Header Section with Title on the left and Button on the right */}
     <div className="flex justify-between items-center mb-6">
@@ -154,6 +156,12 @@ const Items: React.FC = () => {
         <button onClick={handleBackToHome} className="back-to-home-button">
           Back to Home Page
         </button>
+        <button
+        onClick={handleAddItems}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Add Items
+      </button>
       </div>
     </div>
 
