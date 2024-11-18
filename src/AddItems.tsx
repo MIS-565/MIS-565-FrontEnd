@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import "./AddItems.css";
 
 const AddItem = () => {
@@ -10,6 +11,7 @@ const AddItem = () => {
   const [feeRate, setFeeRate] = useState<number | null>(null);
   const [branchID] = useState(1); // Assuming branch ID is constant or retrieved elsewhere
   const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
 
   // Function to handle Item Type change and calculate associated values
   const handleItemTypeChange = (type: string) => {
@@ -78,6 +80,10 @@ const AddItem = () => {
     setFeeRate(null); // Reset to null
   };
 
+  const handleBackToItems = () => {
+    navigate("/items"); // Navigate to the items page
+  };
+
   return (
     <div className="add-item-container">
       <h2>Add New Item</h2>
@@ -128,6 +134,11 @@ const AddItem = () => {
           Add Item
         </button>
       </form>
+
+       {/* Back to Items button */}
+       <button onClick={handleBackToItems} className="back-to-items-button">
+        Back to Items
+      </button>
 
       {/* Popup notification */}
       {showPopup && (
