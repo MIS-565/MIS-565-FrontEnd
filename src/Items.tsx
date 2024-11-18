@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableColumn, 
-  TableRow, 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
   TableCell,
   Chip,
   Tooltip,
-  Button
+  Button,
 } from "@nextui-org/react";
 import { EditIcon } from "./components/icons/EditIcon";
 import { DeleteIcon } from "./components/icons/DeleteIcon";
@@ -101,30 +101,30 @@ const Items: React.FC = () => {
         return (
           <div className="relative flex items-center gap-2">
             <Tooltip content="Details">
-              <Button 
-                isIconOnly 
-                size="sm" 
-                variant="light" 
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
                 onPress={() => console.log("View", item.ITEMID)}
               >
                 <EyeIcon />
               </Button>
             </Tooltip>
             <Tooltip content="Edit">
-              <Button 
-                isIconOnly 
-                size="sm" 
-                variant="light" 
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
                 onPress={() => console.log("Edit", item.ITEMID)}
               >
                 <EditIcon />
               </Button>
             </Tooltip>
             <Tooltip content="Delete">
-              <Button 
-                isIconOnly 
-                size="sm" 
-                variant="light" 
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
                 onPress={() => console.log("Delete", item.ITEMID)}
               >
                 <DeleteIcon />
@@ -139,6 +139,10 @@ const Items: React.FC = () => {
 
   const handleBackToHome = () => {
     navigate("/");
+  };
+
+  const handleAddItems = () => {
+    navigate("/add-items");
   };
 
   return (
@@ -237,8 +241,8 @@ const Items: React.FC = () => {
       <Table aria-label="Items table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn 
-              key={column.uid} 
+            <TableColumn
+              key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
             >
               {column.name}
