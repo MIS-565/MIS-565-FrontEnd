@@ -36,24 +36,24 @@ const AddItem = () => {
 
   const handleAddItem = async () => {
     const newItemData = {
-      ITEMID: itemID,
       ITEMTYPE: itemType,
       ITEMNAME: itemName,
       ITEMCOST: parseFloat(itemCost),
+      STATUS: "AVAILABLE", // Set default status to "AVAILABLE" for new items
       BRANCHID: branchID,
       LOANDURATION: loanDuration,
       FEE_RATE: feeRate,
     };
-
+  
     try {
       const response = await fetch("http://localhost:5001/items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newItemData.ITEMID),
+        body: JSON.stringify(newItemData), // Pass the full object here
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         setItemID(data.ItemID); // Get the new ItemID from the backend response
@@ -66,6 +66,7 @@ const AddItem = () => {
       alert("An error occurred. Please try again.");
     }
   };
+  
 
   const handleClosePopup = () => {
     setShowPopup(false);
