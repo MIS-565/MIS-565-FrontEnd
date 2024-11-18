@@ -7,6 +7,7 @@ import Items from "./Items";
 import Layout from "./Layout";
 import { NextUIProvider } from "@nextui-org/react";
 import AddItem from "./AddItems";
+import CheckIn from "./CheckIn";
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
             <Route path="/Check-out" element={<CheckoutPage />} />
             <Route path="/items" element={<Items />} />
             <Route path="/add-items" element={<AddItem />} />
+            <Route path="/Check-in" element={<CheckIn />} />
           </Routes>
         </Layout>
       </Router>

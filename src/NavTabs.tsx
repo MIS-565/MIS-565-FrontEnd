@@ -34,6 +34,15 @@ const NavTabs: React.FC = () => {
       </Link>
 
       <Link
+        to="/Check-in"
+        className={`nav-link ${
+          location.pathname === "/Check-in" ? "active" : ""
+        }`}
+      >
+        <button className="button">Check In</button>
+      </Link>
+
+      <Link
         to="/items"
         className={`nav-link ${location.pathname === "/items" ? "active" : ""}`}
       >
