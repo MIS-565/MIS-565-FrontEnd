@@ -46,7 +46,7 @@ const AddItem = () => {
       LOANDURATION: loanDuration,
       FEE_RATE: feeRate,
     };
-  
+
     try {
       const response = await fetch("http://localhost:5001/items", {
         method: "POST",
@@ -55,7 +55,7 @@ const AddItem = () => {
         },
         body: JSON.stringify(newItemData), // Pass the full object here
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setItemID(data.ItemID); // Get the new ItemID from the backend response
@@ -68,7 +68,6 @@ const AddItem = () => {
       alert("An error occurred. Please try again.");
     }
   };
-  
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -135,8 +134,8 @@ const AddItem = () => {
         </button>
       </form>
 
-       {/* Back to Items button */}
-       <button onClick={handleBackToItems} className="back-to-items-button">
+      {/* Back to Items button */}
+      <button onClick={handleBackToItems} className="back-to-items-button">
         Back to Items
       </button>
 
@@ -146,8 +145,10 @@ const AddItem = () => {
           <div className="popup">
             <h3>New Item Created!</h3>
             <p>New Item ID: {itemID}</p>
+            <button onClick={handleClosePopup} className="ok-button">
+              OK
+            </button>
           </div>
-          <button onClick={handleClosePopup}>OK</button>
         </div>
       )}
     </div>
