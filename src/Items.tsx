@@ -75,6 +75,29 @@ const Items: React.FC = () => {
     return matchesType && matchesStatus;
   });
 
+  // Function to make item available
+  const handleMakeAvailable = async (itemID: number) => {
+    try {
+      const response = await fetch(`http://localhost:5001/items/${itemID}/make-available`, {
+        method: "PUT",
+      });
+      if (response.ok) {
+        alert("Item made available.");
+        // Update item status locally or refetch items
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            item.ITEMID === itemID ? { ...item, STATUS: "AVAILABLE" } : item
+          )
+        );
+      } else {
+        alert("Failed to make item available.");
+      }
+    } catch (error) {
+      console.error("Error making item available:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   const renderCell = (item: Item, columnKey: React.Key) => {
     const cellValue = item[columnKey as keyof Item];
 
@@ -100,6 +123,14 @@ const Items: React.FC = () => {
       case "actions":
         return (
           <div className="relative flex items-center gap-2">
+            {item.STATUS === "CHECKED IN" && (
+              <button
+                onClick={() => handleMakeAvailable(item.ITEMID)}
+                className="make-available-button"
+              >
+                Make Available
+              </button>
+            )}
             <Tooltip content="Details">
               <Button
                 isIconOnly
