@@ -14,7 +14,8 @@ interface CheckedOutItem {
 const CheckIn = () => {
   const [checkedOutItems, setCheckedOutItems] = useState<CheckedOutItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<CheckedOutItem | null>(null);
-  const [selectedRenewItem, setSelectedRenewItem] = useState<CheckedOutItem | null>(null);
+  const [selectedRenewItem, setSelectedRenewItem] =
+    useState<CheckedOutItem | null>(null);
   const [message, setMessage] = useState("");
   const [renewMessage, setRenewMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -78,49 +79,52 @@ const CheckIn = () => {
     }
   };
 
-// Handle the item renew
-const handleRenew = async () => {
-  if (!selectedRenewItem) {
-    setRenewMessage("Please select an item to renew.");
-    return;
-  }
-
-  setIsRenewProcessing(true);
-  try {
-    const response = await fetch(`http://localhost:5001/renew`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        itemId: selectedRenewItem.ITEMID,
-        checkoutId: selectedRenewItem.Transactions[0].CHECKOUTID,
-        ext_date: new Date().toISOString().split('T')[0] // Current date in YYYY-MM-DD format
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const formattedDueDate = data.newDueDate ? data.newDueDate.split("T")[0] : "unknown date";
-      setRenewMessage(`Item renewed successfully. New due date: ${formattedDueDate}`);
-    } else if (response.status === 400) {
-      const errorData = await response.json();
-      setRenewMessage(errorData.message || "Cannot renew item more than twice.");
-    } else {
-      const errorData = await response.json();
-      setRenewMessage(errorData.message || "Error renewing the item.");
+  // Handle the item renew
+  const handleRenew = async () => {
+    if (!selectedRenewItem) {
+      setRenewMessage("Please select an item to renew.");
+      return;
     }
-  } catch (error) {
-    console.error("Error:", error);
-    setRenewMessage("Network error when trying to renew the item.");
-  } finally {
-    setIsRenewProcessing(false);
-  }
-};
 
+    setIsRenewProcessing(true);
+    try {
+      const response = await fetch(`http://localhost:5001/renew`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          itemId: selectedRenewItem.ITEMID,
+          checkoutId: selectedRenewItem.Transactions[0].CHECKOUTID,
+          ReturnDate: "",
+          ext_date: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
+        }),
+      });
 
-
-
+      if (response.ok) {
+        const data = await response.json();
+        const formattedDueDate = data.newDueDate
+          ? data.newDueDate.split("T")[0]
+          : "unknown date";
+        setRenewMessage(
+          `Item renewed successfully. New due date: ${formattedDueDate}`
+        );
+      } else if (response.status === 400) {
+        const errorData = await response.json();
+        setRenewMessage(
+          errorData.message || "Cannot renew item more than twice."
+        );
+      } else {
+        const errorData = await response.json();
+        setRenewMessage(errorData.message || "Error renewing the item.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setRenewMessage("Network error when trying to renew the item.");
+    } finally {
+      setIsRenewProcessing(false);
+    }
+  };
 
   // Handle input change for autocomplete
   const handleInputChange = (value: string) => {
@@ -129,7 +133,9 @@ const handleRenew = async () => {
     if (searchMode === "name") {
       matchedItem = checkedOutItems.find((item) => item.ITEMNAME === value);
     } else if (searchMode === "id") {
-      matchedItem = checkedOutItems.find((item) => item.ITEMID.toString() === value);
+      matchedItem = checkedOutItems.find(
+        (item) => item.ITEMID.toString() === value
+      );
     }
 
     if (selection === "checkin") {
@@ -144,11 +150,21 @@ const handleRenew = async () => {
       <div className="form-section text-center p-6 bg-white rounded shadow-lg max-w-sm w-full">
         {!selection && (
           <>
-            <h2 className="text-2xl font-semibold mb-6">What would you like to do?</h2>
-            <Button onClick={() => setSelection("checkin")} color="primary" className="w-full mt-4">
+            <h2 className="text-2xl font-semibold mb-6">
+              What would you like to do?
+            </h2>
+            <Button
+              onClick={() => setSelection("checkin")}
+              color="primary"
+              className="w-full mt-4"
+            >
               Check In
             </Button>
-            <Button onClick={() => setSelection("renew")} color="primary" className="w-full mt-4">
+            <Button
+              onClick={() => setSelection("renew")}
+              color="primary"
+              className="w-full mt-4"
+            >
               Renew
             </Button>
           </>
@@ -183,22 +199,37 @@ const handleRenew = async () => {
 
             <Autocomplete
               label={searchMode === "name" ? "Item Name" : "Item ID"}
-              placeholder={searchMode === "name" ? "Search for an item by name" : "Search for an item by ID"}
+              placeholder={
+                searchMode === "name"
+                  ? "Search for an item by name"
+                  : "Search for an item by ID"
+              }
               onInputChange={(value) => handleInputChange(value)}
               value={inputValue}
               className="max-w-xs"
               color="primary"
             >
               {checkedOutItems.map((item) => (
-                <AutocompleteItem key={item.ITEMID} value={searchMode === "name" ? item.ITEMNAME : item.ITEMID.toString()}>
-                  {searchMode === "name" ? item.ITEMNAME : item.ITEMID.toString()}
+                <AutocompleteItem
+                  key={item.ITEMID}
+                  value={
+                    searchMode === "name"
+                      ? item.ITEMNAME
+                      : item.ITEMID.toString()
+                  }
+                >
+                  {searchMode === "name"
+                    ? item.ITEMNAME
+                    : item.ITEMID.toString()}
                 </AutocompleteItem>
               ))}
             </Autocomplete>
 
             <Button
               onClick={selection === "checkin" ? handleCheckIn : handleRenew}
-              isLoading={selection === "checkin" ? isProcessing : isRenewProcessing}
+              isLoading={
+                selection === "checkin" ? isProcessing : isRenewProcessing
+              }
               color="primary"
               className="w-full mt-4"
             >
@@ -211,7 +242,9 @@ const handleRenew = async () => {
               </div>
             )}
 
-            <Button onClick={() => setSelection(null)} className="w-full mt-4">Back</Button>
+            <Button onClick={() => setSelection(null)} className="w-full mt-4">
+              Back
+            </Button>
           </>
         )}
       </div>

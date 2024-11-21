@@ -258,42 +258,20 @@ const Items: React.FC = () => {
 
       {/* Status Filter Section */}
       <div className="flex gap-4 mb-6">
-        <label>
-          <input
-            type="radio"
-            value="Any"
-            checked={statusFilter === "Any"}
-            onChange={() => handleStatusFilterChange("Any")}
-          />
-          Any
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="Available"
-            checked={statusFilter === "Available"}
-            onChange={() => handleStatusFilterChange("Available")}
-          />
-          Available
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="Checked In"
-            checked={statusFilter === "Checked In"}
-            onChange={() => handleStatusFilterChange("Checked In")}
-          />
-          Checked In
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="Checked Out"
-            checked={statusFilter === "Checked Out"}
-            onChange={() => handleStatusFilterChange("Checked Out")}
-          />
-          Checked Out
-        </label>
+        {/*<label htmlFor="status-filter" className="font-bold">
+          Filter:
+        </label>*/}
+        <select
+          id="status-filter"
+          className="px-4 py-2 border rounded-md"
+          value={statusFilter}
+          onChange={(e) => handleStatusFilterChange(e.target.value)}
+        >
+          <option value="Any">All Items</option>
+          <option value="Available">Available</option>
+          <option value="Checked In">Checked In</option>
+          <option value="Checked Out">Checked Out</option>
+        </select>
       </div>
 
       {/* Items Table */}
