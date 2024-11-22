@@ -22,7 +22,6 @@ const CheckIn = () => {
   const [isRenewProcessing, setIsRenewProcessing] = useState(false);
   const [selection, setSelection] = useState<"checkin" | "renew" | null>(null);
   const [inputValue, setInputValue] = useState("");
-  const [searchMode, setSearchMode] = useState<"name" | "id">("name");
 
   // Fetch checked-out items from the backend
   useEffect(() => {
@@ -96,7 +95,6 @@ const CheckIn = () => {
         body: JSON.stringify({
           itemId: selectedRenewItem.ITEMID,
           checkoutId: selectedRenewItem.Transactions[0].CHECKOUTID,
-          ReturnDate: "",
           ext_date: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
         }),
       });
@@ -129,14 +127,9 @@ const CheckIn = () => {
   // Handle input change for autocomplete
   const handleInputChange = (value: string) => {
     setInputValue(value);
-    let matchedItem;
-    if (searchMode === "name") {
-      matchedItem = checkedOutItems.find((item) => item.ITEMNAME === value);
-    } else if (searchMode === "id") {
-      matchedItem = checkedOutItems.find(
-        (item) => item.ITEMID.toString() === value
-      );
-    }
+    const matchedItem = checkedOutItems.find(
+      (item) => item.ITEMID.toString() === value
+    );
 
     if (selection === "checkin") {
       setSelectedItem(matchedItem || null);
@@ -176,34 +169,9 @@ const CheckIn = () => {
               {selection === "checkin" ? "Check-In Item" : "Renew Item"}
             </h2>
 
-            <div className="search-mode-toggle">
-              <label>
-                <input
-                  type="radio"
-                  value="name"
-                  checked={searchMode === "name"}
-                  onChange={() => setSearchMode("name")}
-                />
-                Search by Name
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  value="id"
-                  checked={searchMode === "id"}
-                  onChange={() => setSearchMode("id")}
-                />
-                Search by ID
-              </label>
-            </div>
-
             <Autocomplete
-              label={searchMode === "name" ? "Item Name" : "Item ID"}
-              placeholder={
-                searchMode === "name"
-                  ? "Search for an item by name"
-                  : "Search for an item by ID"
-              }
+              label="Item ID"
+              placeholder="Search for an item by ID"
               onInputChange={(value) => handleInputChange(value)}
               value={inputValue}
               className="max-w-xs"
@@ -212,15 +180,9 @@ const CheckIn = () => {
               {checkedOutItems.map((item) => (
                 <AutocompleteItem
                   key={item.ITEMID}
-                  value={
-                    searchMode === "name"
-                      ? item.ITEMNAME
-                      : item.ITEMID.toString()
-                  }
+                  value={item.ITEMID.toString()}
                 >
-                  {searchMode === "name"
-                    ? item.ITEMNAME
-                    : item.ITEMID.toString()}
+                  {item.ITEMID.toString()}
                 </AutocompleteItem>
               ))}
             </Autocomplete>
