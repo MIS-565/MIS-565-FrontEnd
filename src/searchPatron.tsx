@@ -170,7 +170,7 @@ const SearchPatron: React.FC = () => {
                 (item, index) => (
                   <li key={index}>
                     <strong>ItemID:</strong> {item.itemid}, <strong>Item:</strong> {item.itemName}, <strong>Type:</strong> {item.itemType}, <strong>Due Date:</strong>{" "}
-                    {new Date(item.dueDate).toLocaleDateString()}
+                    {new Date(item.dueDate).toLocaleDateString('un-US', {timeZone: 'UTC'})}
                   </li>
                 )
               )}
