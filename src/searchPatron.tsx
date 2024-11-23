@@ -169,7 +169,7 @@ const SearchPatron: React.FC = () => {
               {(showAllItems ? filteredItems : filteredItems.slice(0, 3)).map(
                 (item, index) => (
                   <li key={index}>
-                    <strong>Item:</strong> {item.itemName}, <strong>Type:</strong> {item.itemType}, <strong>Due Date:</strong>{" "}
+                    <strong>ItemID:</strong> {item.itemid}, <strong>Item:</strong> {item.itemName}, <strong>Type:</strong> {item.itemType}, <strong>Due Date:</strong>{" "}
                     {new Date(item.dueDate).toLocaleDateString()}
                   </li>
                 )
