@@ -10,6 +10,7 @@ import {
   Tooltip,
   Button,
   Spinner,
+  Input,
 } from "@nextui-org/react";
 import { EditIcon } from "./components/icons/EditIcon";
 import { DeleteIcon } from "./components/icons/DeleteIcon";
@@ -42,6 +43,7 @@ const Items: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [filterType, setFilterType] = useState<string>("All");
   const [statusFilter, setStatusFilter] = useState<string>("Any");
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Search query
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,6 +71,10 @@ const Items: React.FC = () => {
     setStatusFilter(status);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
   const filteredItems = items.filter((item) => {
     const matchesType = filterType === "All" || item.ITEMTYPE === filterType;
     const matchesStatus =
@@ -76,35 +82,12 @@ const Items: React.FC = () => {
       (statusFilter === "Available" && item.STATUS === "AVAILABLE") ||
       (statusFilter === "Checked In" && item.STATUS === "CHECKED IN") ||
       (statusFilter === "Checked Out" && item.STATUS === "CHECKED OUT");
-
-    return matchesType && matchesStatus;
+    const matchesSearch =
+      searchQuery === "" ||
+      item.ITEMNAME.toLowerCase().includes(searchQuery) ||
+      item.ITEMID.toString().includes(searchQuery); // Match item name or ID
+    return matchesType && matchesStatus && matchesSearch;
   });
-
-  // Function to make item available
-  const handleMakeAvailable = async (itemID: number) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5001/items/${itemID}/make-available`,
-        {
-          method: "PUT",
-        }
-      );
-      if (response.ok) {
-        alert("Item made available.");
-        // Update item status locally or refetch items
-        setItems((prevItems) =>
-          prevItems.map((item) =>
-            item.ITEMID === itemID ? { ...item, STATUS: "AVAILABLE" } : item
-          )
-        );
-      } else {
-        alert("Failed to make item available.");
-      }
-    } catch (error) {
-      console.error("Error making item available:", error);
-      alert("An error occurred. Please try again.");
-    }
-  };
 
   const renderCell = (item: Item, columnKey: React.Key) => {
     const cellValue = item[columnKey as keyof Item];
@@ -135,14 +118,6 @@ const Items: React.FC = () => {
       case "actions":
         return (
           <div className="relative flex items-center gap-2">
-            {item.STATUS === "CHECKED IN" && (
-              <button
-                onClick={() => handleMakeAvailable(item.ITEMID)}
-                className="make-available-button"
-              >
-                Make Available
-              </button>
-            )}
             <Tooltip content="Details">
               <Button
                 isIconOnly
@@ -216,6 +191,20 @@ const Items: React.FC = () => {
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className="mb-6">
+  <Input
+    type="text"
+    placeholder="Search by Item Name or ID"
+    value={searchQuery}
+    onChange={handleSearchChange}
+    isClearable
+    fullWidth
+    onClear={() => setSearchQuery("")} // Manually handle clearing
+  />
+</div>
+
+
       {/* Filter Section */}
       <div className="flex gap-4 mb-6">
         <label>
@@ -258,9 +247,6 @@ const Items: React.FC = () => {
 
       {/* Status Filter Section */}
       <div className="flex gap-4 mb-6">
-        {/*<label htmlFor="status-filter" className="font-bold">
-          Filter:
-        </label>*/}
         <select
           id="status-filter"
           className="px-4 py-2 border rounded-md"
