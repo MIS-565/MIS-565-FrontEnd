@@ -33,7 +33,7 @@ const AddPatron = () => {
     };
 
     try {
-      const response = await fetch("https://mis-565-backend-production.up.railway.app/patrons", {
+      const response = await fetch("http://localhost:5001/patrons", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,24 +128,31 @@ const AddPatron = () => {
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup">
+            {/* Close Button */}
+            <button className="close-button" onClick={handleClosePopup}>
+              &times;
+            </button>
+
             <h3>New Patron Created!</h3>
-            <p>New Patron ID: {patronID}</p>
+
+            {/* Display the patron ID after successfully adding */}
+            {patronID && (
+              <div className="patron-id-display">
+                <h3>New Patron ID:</h3>
+                <p>{patronID}</p>
+              </div>
+            )}
+
+            {/* Display the issue and expiry dates */}
+            {issueDate && expiryDate && (
+              <div className="dates-display">
+                <h3>Issue Date: {issueDate}</h3>
+                <h3>Expiry Date: {expiryDate}</h3>
+              </div>
+            )}
+
+            <button onClick={handleClosePopup}>OK</button>
           </div>
-          {/* Display the patron ID after successfully adding */}
-          {patronID && (
-            <div className="patron-id-display">
-              <h3>New Patron ID:</h3>
-              <p>{patronID}</p>
-            </div>
-          )}
-          {/* Display the issue and expiry dates */}
-          {issueDate && expiryDate && (
-            <div className="dates-display">
-              <h3>Issue Date: {issueDate}</h3>
-              <h3>Expiry Date: {expiryDate}</h3>
-            </div>
-          )}
-          <button onClick={handleClosePopup}>OK</button>
         </div>
       )}
     </div>

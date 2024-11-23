@@ -1,39 +1,43 @@
-/* AddPatron.css */
-.add-patron-container {
+/* AddItem.css */
+.add-item-container {
     max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 30px;
+    margin: auto;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
-  }
-  
-  .add-patron-container h2 {
+}
+
+.add-item-container h2 {
     text-align: center;
     color: #333;
-  }
-  
-  .patron-form {
+}
+
+.item-form {
     display: flex;
     flex-direction: column;
-  }
-  
-  .form-group {
+}
+
+.form-group {
     margin-bottom: 15px;
-  }
-  
-  .form-group label {
+}
+
+.form-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
-  }
-  
-  
-  
-  .submit-button {
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.submit-button {
     width: 100%;
     padding: 10px;
     border-radius: 4px;
@@ -43,22 +47,23 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .submit-button:hover {
+}
+
+.submit-button:hover {
     background-color: #45a049;
-  }
-  
-  .patron-id-display {
+}
+
+.item-id-display {
     margin-top: 20px;
     text-align: center;
     color: #333;
-  }
-  
-  .patron-id-display h3 {
+}
+
+.item-id-display h3 {
     margin-bottom: 5px;
-  }
-  .popup-overlay {
+}
+
+.popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -73,45 +78,38 @@
   
   .popup {
     background: #fff;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 10px;
+    padding: 20px 30px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     position: relative;
     max-width: 400px;
-    width: 90%; /* Make it responsive */
+    width: 90%;
   }
   
   .popup h3 {
     margin-bottom: 10px;
   }
   
-  .patron-id-display,
-  .dates-display {
-    margin-top: 15px;
+  .popup p {
+    margin-bottom: 20px;
   }
   
-  .popup button {
-    margin-top: 20px;
-    padding: 10px 20px;
+  .ok-button {
     background-color: #007bff;
     color: white;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
   }
   
-  .popup button:hover {
+  .ok-button:hover {
     background-color: #0056b3;
   }
   
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
+
+.item-details-display {
+    margin-top: 10px;
+    color: #333;
+}

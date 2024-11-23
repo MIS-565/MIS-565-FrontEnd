@@ -34,7 +34,7 @@ const SearchPatron: React.FC = () => {
   
     try {
       // Fetch patron data
-      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}`, {
+      const response = await fetch(`http://localhost:5001/patrons/${patronID}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const SearchPatron: React.FC = () => {
         setIsEligible(eligible);
   
         // Fetch items associated with the patron
-        const itemsResponse = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}/items`, {
+        const itemsResponse = await fetch(`http://localhost:5001/patrons/${patronID}/items`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -169,8 +169,8 @@ const SearchPatron: React.FC = () => {
               {(showAllItems ? filteredItems : filteredItems.slice(0, 3)).map(
                 (item, index) => (
                   <li key={index}>
-                    <strong>Item:</strong> {item.itemName}, <strong>Type:</strong> {item.itemType}, <strong>Due Date:</strong>{" "}
-                    {new Date(item.dueDate).toLocaleDateString()}
+                    <strong>ItemID:</strong> {item.itemid}, <strong>Item:</strong> {item.itemName}, <strong>Type:</strong> {item.itemType}, <strong>Due Date:</strong>{" "}
+                    {new Date(item.dueDate).toLocaleDateString('un-US', {timeZone: 'UTC'})}
                   </li>
                 )
               )}

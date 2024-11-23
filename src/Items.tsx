@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableColumn, 
-  TableRow, 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
   TableCell,
   Chip,
   Tooltip,
-  Button
+  Button,
+  Spinner,
+  Input,
 } from "@nextui-org/react";
 import { EditIcon } from "./components/icons/EditIcon";
 import { DeleteIcon } from "./components/icons/DeleteIcon";
@@ -38,31 +40,70 @@ const columns = [
 
 const Items: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [filterType, setFilterType] = useState<string>("All");
+  const [statusFilter, setStatusFilter] = useState<string>("Any");
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Search query
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItems = async () => {
+      setLoading(true);
       try {
-        const response = await fetch("https://mis-565-backend-production.up.railway.app/items");
+        const response = await fetch("http://localhost:5001/items");
         const data = await response.json();
         setItems(data);
       } catch (error) {
         console.error("Error fetching items:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchItems();
   }, []);
 
+  const handleFilterChange = (type: string) => {
+    setFilterType(type);
+  };
+
+  const handleStatusFilterChange = (status: string) => {
+    setStatusFilter(status);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filteredItems = items.filter((item) => {
+    const matchesType = filterType === "All" || item.ITEMTYPE === filterType;
+    const matchesStatus =
+      statusFilter === "Any" ||
+      (statusFilter === "Available" && item.STATUS === "AVAILABLE") ||
+      (statusFilter === "Checked In" && item.STATUS === "CHECKED IN") ||
+      (statusFilter === "Checked Out" && item.STATUS === "CHECKED OUT");
+    const matchesSearch =
+      searchQuery === "" ||
+      item.ITEMNAME.toLowerCase().includes(searchQuery) ||
+      item.ITEMID.toString().includes(searchQuery); // Match item name or ID
+    return matchesType && matchesStatus && matchesSearch;
+  });
+
   const renderCell = (item: Item, columnKey: React.Key) => {
     const cellValue = item[columnKey as keyof Item];
 
     switch (columnKey) {
       case "STATUS":
+        const chipColor =
+          item.STATUS === "AVAILABLE"
+            ? "success"
+            : item.STATUS === "CHECKED OUT"
+            ? "danger"
+            : "warning";
         return (
-          <Chip 
-            className="capitalize" 
-            color={item.STATUS === "AVAILABLE" ? "success" : "danger"}
+          <Chip
+            className="capitalize"
+            color={chipColor}
             size="sm"
             variant="flat"
           >
@@ -78,30 +119,30 @@ const Items: React.FC = () => {
         return (
           <div className="relative flex items-center gap-2">
             <Tooltip content="Details">
-              <Button 
-                isIconOnly 
-                size="sm" 
-                variant="light" 
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
                 onPress={() => console.log("View", item.ITEMID)}
               >
                 <EyeIcon />
               </Button>
             </Tooltip>
             <Tooltip content="Edit">
-              <Button 
-                isIconOnly 
-                size="sm" 
-                variant="light" 
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
                 onPress={() => console.log("Edit", item.ITEMID)}
               >
                 <EditIcon />
               </Button>
             </Tooltip>
             <Tooltip content="Delete">
-              <Button 
-                isIconOnly 
-                size="sm" 
-                variant="light" 
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
                 onPress={() => console.log("Delete", item.ITEMID)}
               >
                 <DeleteIcon />
@@ -118,27 +159,120 @@ const Items: React.FC = () => {
     navigate("/");
   };
 
+  const handleAddItems = () => {
+    navigate("/add-items");
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Library Items</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Library Items</h1>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleAddItems}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Add Items
+          </button>
+          <button
+            onClick={handleBackToHome}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            Back to Home Page
+          </button>
+        </div>
+      </div>
 
-      {/* Back to Home Page button */}
-      <button onClick={handleBackToHome} className="back-to-home-button">
-        Back to Home Page
-      </button>
+      {/* Search Bar */}
+      <div className="mb-6">
+  <Input
+    type="text"
+    placeholder="Search by Item Name or ID"
+    value={searchQuery}
+    onChange={handleSearchChange}
+    isClearable
+    fullWidth
+    onClear={() => setSearchQuery("")} // Manually handle clearing
+  />
+</div>
 
+
+      {/* Filter Section */}
+      <div className="flex gap-4 mb-6">
+        <label>
+          <input
+            type="radio"
+            value="All"
+            checked={filterType === "All"}
+            onChange={() => handleFilterChange("All")}
+          />
+          All
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="Book"
+            checked={filterType === "Book"}
+            onChange={() => handleFilterChange("Book")}
+          />
+          Book
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="Movie"
+            checked={filterType === "Movie"}
+            onChange={() => handleFilterChange("Movie")}
+          />
+          Movie
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="Game"
+            checked={filterType === "Game"}
+            onChange={() => handleFilterChange("Game")}
+          />
+          Game
+        </label>
+      </div>
+
+      {/* Status Filter Section */}
+      <div className="flex gap-4 mb-6">
+        <select
+          id="status-filter"
+          className="px-4 py-2 border rounded-md"
+          value={statusFilter}
+          onChange={(e) => handleStatusFilterChange(e.target.value)}
+        >
+          <option value="Any">All Items</option>
+          <option value="Available">Available</option>
+          <option value="Checked In">Checked In</option>
+          <option value="Checked Out">Checked Out</option>
+        </select>
+      </div>
+
+      {/* Items Table */}
       <Table aria-label="Items table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn 
-              key={column.uid} 
+            <TableColumn
+              key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
             >
               {column.name}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={items}>
+        <TableBody items={filteredItems}>
           {(item) => (
             <TableRow key={item.ITEMID}>
               {(columnKey) => (

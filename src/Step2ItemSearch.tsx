@@ -1,7 +1,6 @@
-// Step2ItemSearch.tsx
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useCheckout } from "./CheckoutContext";
-import {Autocomplete, AutocompleteItem} from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
 
 interface Item {
@@ -15,116 +14,153 @@ interface Item {
 }
 
 const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
-  const { itemID, setItemID, setItemData, setIsItemAvailable, itemData, isItemAvailable } = useCheckout();
+  const { itemIDs, setItemIDs, setItemData, setIsItemAvailable, itemData, isItemAvailable, selectedItems, setSelectedItems } = useCheckout();
   const [items, setItems] = useState<Item[]>([]);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  // const [selectedItems, setSelectedItems] = useState<Item[]>([]);  // New state for selected items
   const [inputValue, setInputValue] = useState("");
+  const [searchMode, setSearchMode] = useState("name");
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("https://mis-565-backend-production.up.railway.app/items");
+        const response = await fetch("http://localhost:5001/items");
         const data = await response.json();
-        console.log('Data', data)
-        setItems(data);
+        const availableItems = data.filter((item: Item) => item.STATUS == "AVAILABLE");
+        setItems(availableItems);
       } catch (error) {
         console.error("Error fetching items:", error);
       }
     };
-
     fetchItems();
   }, []);
 
-  
-
   const handleInputChange = (value: string) => {
     setInputValue(value);
-  
-    // Check if the entered value matches an item name in the list
-    const matchedItem = items.find((item) => item.ITEMNAME === value);
+    let matchedItem;
+    if (searchMode === "name") {
+      matchedItem = items.find((item) => item.ITEMNAME === value);
+    } else if (searchMode === "id") {
+      matchedItem = items.find((item) => item.ITEMID.toString() === value);
+    }
+
     if (matchedItem) {
-      setSelectedItem(matchedItem);
-      setItemData(matchedItem);
-      setItemID(matchedItem.ITEMID.toString());
       setIsItemAvailable(matchedItem.STATUS === "AVAILABLE");
     } else {
-      setSelectedItem(null); // Clear selection if no match
-      setItemData(null); // Clear item data in context if no match
-      setItemID("");
+      setIsItemAvailable(false);
     }
   };
-  
 
+  const handleSelectItem = (item: Item) => {
+    if (selectedItems.length >= 3) {
+      alert("You can only check out up to 3 items.");
+      return;
+    }
+    if (selectedItems.some(selectedItem => selectedItem.ITEMID === item.ITEMID)) {
+      alert("This item has already been selected.");
+      return;  // Return early to prevent adding the item
+    }
+    setSelectedItems([...selectedItems, item]);
+    setItemData([...itemData, item]);  // Add item data to context
+    setItemIDs([...itemIDs, item.ITEMID.toString()]);  // Add item ID to context
+  };
+
+  const handleRemoveItem = (itemID: number) => {
+    const updatedItems = selectedItems.filter(item => item.ITEMID !== itemID);
+    setSelectedItems(updatedItems);
+    setItemData(updatedItems);
+    setItemIDs(updatedItems.map(item => item.ITEMID.toString()));
+  };
 
   return (
     <>
       <div className="container">
         <div className="form-section">
-          <h2 style={{ textDecorationColor: "black" }}>Search for Item</h2>
-          
-          <Autocomplete 
-            label="Item Name" 
-            placeholder="Search for an item by name"
+          <h1 style={{ textDecorationColor: "black" }}>Search for Item</h1>
+          <p style={{ marginTop: 0, marginBottom: 10, textDecorationColor: "black" }}>You may select up to three items to check out.</p>
+          <p style={{ marginTop: -10, marginBottom: 10, textDecorationColor: "black" }}>Only available items are shown.</p>
+
+          <div className="search-mode-toggle">
+            <label>
+              <input
+                type="radio"
+                value="name"
+                checked={searchMode === "name"}
+                onChange={() => setSearchMode("name")}
+              />
+              Search by Name
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="id"
+                checked={searchMode === "id"}
+                onChange={() => setSearchMode("id")}
+              />
+              Search by ID
+            </label>
+          </div>
+
+          <Autocomplete
+            label={searchMode === "name" ? "Item Name" : "Item ID"}
+            placeholder={searchMode === "name" ? "Search for an item by name" : "Search for an item by ID"}
             onInputChange={(value) => handleInputChange(value)}
             value={inputValue}
             className="max-w-xs"
             color="primary"
           >
-              {items.map((item) => (
-                <AutocompleteItem key={item.ITEMID} value={item.ITEMNAME}>
-                  {item.ITEMNAME}
-                </AutocompleteItem>
-              ))}
+            {items.map((item) => (
+              <AutocompleteItem key={item.ITEMID} value={searchMode === "name" ? item.ITEMNAME : item.ITEMID.toString()} onClick={() => handleSelectItem(item)}>
+                {searchMode === "name" ? item.ITEMNAME : item.ITEMID.toString()}
+              </AutocompleteItem>
+            ))}
           </Autocomplete>
-         
-          {/* Display selected item details */}
-          {selectedItem && (
-            <Card className="max-w-[300px] mx-auto mt-6">
-              <CardHeader className="flex gap-3">
-                  <p className="text-md font-semibold text-center">{selectedItem.ITEMNAME}</p>
-              </CardHeader>
-              <Divider/>
-              <CardBody>
-                <div className="flex flex-col gap-3">
-                  <div className="flex justify-between">
-                    <p className="text-default-500">Type:</p>
-                    <p className="font-semibold">{selectedItem.ITEMTYPE}</p>
-                  </div>
-                  <Divider/>
-                  <div className="flex justify-between">
-                    <p className="text-default-500">Cost:</p>
-                    <p className="font-semibold">${selectedItem.ITEMCOST}</p>
-                  </div>
-                  <Divider/>
-                  <div className="flex justify-between">
-                    <p className="text-default-500">Status:</p>
-                    <p className={`font-semibold ${selectedItem.STATUS === "AVAILABLE" ? "text-success" : "text-danger"}`}>
-                      {selectedItem.STATUS}
-                    </p>
-                  </div>
-                  <Divider/>
-                  <div className="flex justify-between">
-                    <p className="text-default-500">Loan Duration:</p>
-                    <p className="font-semibold">{selectedItem.LOANDURATION} days</p>
-                  </div>
-                  <Divider/>
-                  <div className="flex justify-between">
-                    <p className="text-default-500">Fee Rate:</p>
-                    <p className="font-semibold">${selectedItem.Fee_Rate}/day</p>
-                  </div>
-                  <Divider/>
-                  <div className="flex justify-between">
-                    <p className="text-default-500">Checkout Eligibility:</p>
-                    <p className={`font-semibold ${isItemAvailable ? "text-success" : "text-danger"}`}>
-                      {isItemAvailable ? "Available" : "Not Available"}
-                    </p>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          )}
 
-          {/* Navigation Buttons */}
+{/* Selected Items Section */}
+<div className="flex gap-4 flex-wrap justify-center mt-6">
+{(selectedItems as Item[]).map((item) => (
+  <Card key={item.ITEMID} className="max-w-[250px]">
+    <CardHeader className="flex gap-3">
+      <p className="text-md font-semibold text-center">{item.ITEMNAME}</p>
+    </CardHeader>
+    <Divider />
+    <CardBody>
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between">
+          <p className="text-default-500">Type:</p>
+          <p className="font-semibold">{item.ITEMTYPE}</p>
+        </div>
+        <Divider />
+        <div className="flex justify-between">
+          <p className="text-default-500">Cost:</p>
+          <p className="font-semibold">${item.ITEMCOST}</p>
+        </div>
+        <Divider />
+        <div className="flex justify-between">
+          <p className="text-default-500">Status:</p>
+          <p className={`font-semibold ${item.STATUS === "AVAILABLE" ? "text-success" : "text-danger"}`}>
+            {item.STATUS}
+          </p>
+        </div>
+        <Divider />
+        <div className="flex justify-between">
+          <p className="text-default-500">Loan Duration:</p>
+          <p className="font-semibold">{item.LOANDURATION} days</p>
+        </div>
+        <Divider />
+        <div className="flex justify-between">
+          <p className="text-default-500">Fee Rate:</p>
+          <p className="font-semibold">${item.Fee_Rate}/day</p>
+        </div>
+        <Divider />
+        <button onClick={() => handleRemoveItem(item.ITEMID)}>Remove</button>
+      </div>
+    </CardBody>
+  </Card>
+))}
+</div>
+
+
+
           <div className="button-container">
             <button
               className="back-button"
@@ -136,18 +172,12 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
             <button
               className="next-button"
               onClick={onNext}
-              disabled={!isItemAvailable}
-              title={
-                !isItemAvailable ? "Item must be available to proceed" : ""
-              }
+              disabled={selectedItems.length === 0}
             >
-              Next
+              Proceed to Checkout
             </button>
           </div>
         </div>
-      </div>
-      <div>
-        
       </div>
     </>
   );

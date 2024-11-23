@@ -7,7 +7,9 @@
 /* Adjust the tab content padding */
 .tab-content {
   padding: 24px 0;
+  
 }
+
 
 /* Override any conflicting button styles for tabs */
 [data-slot="tab"] {
