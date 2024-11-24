@@ -62,64 +62,86 @@ const AddPatron = () => {
   };
 
   return (
-    <div className="add-patron-container">
-      <h2>Add New Patron</h2>
+    <div className="add-patron-container bg-white rounded-lg shadow-lg p-4 max-w-sm mx-auto">
+      <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+        Add New Patron
+      </h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleAddPatron();
         }}
-        className="patron-form flex flex-col items-center w-full gap-4"
+        className="patron-form flex flex-col gap-4"
       >
-        <div className="form-group flex flex-col items-center w-full">
-          <Input
+        <div className="form-group flex flex-col gap-1">
+          <label
+            htmlFor="firstName"
+            className="text-sm font-medium text-gray-700"
+          >
+            First Name
+          </label>
+          <input
+            id="firstName"
             type="text"
-            label="First Name"
             placeholder="Enter first name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            variant="bordered"
-            className="max-w-xs mb-4"
+            className="patron-input"
             required
           />
         </div>
-        <div className="form-group flex flex-col items-center w-full">
-          <Input
+        <div className="form-group flex flex-col gap-1">
+          <label
+            htmlFor="lastName"
+            className="text-sm font-medium text-gray-700"
+          >
+            Last Name
+          </label>
+          <input
+            id="lastName"
             type="text"
-            label="Last Name"
             placeholder="Enter last name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            variant="bordered"
-            className="max-w-xs mb-4"
+            className="patron-input"
             required
           />
         </div>
-        <div className="form-group flex flex-col items-center w-full">
-          <Input
+        <div className="form-group flex flex-col gap-1">
+          <label
+            htmlFor="address"
+            className="text-sm font-medium text-gray-700"
+          >
+            Address
+          </label>
+          <input
+            id="address"
             type="text"
-            label="Address"
             placeholder="Enter address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            variant="bordered"
-            className="max-w-xs mb-4"
+            className="patron-input"
             required
           />
         </div>
-        <div className="form-group flex flex-col items-center w-full">
-          <Input
+        <div className="form-group flex flex-col gap-1">
+          <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            id="email"
             type="email"
-            label="Email"
             placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            variant="bordered"
-            className="max-w-xs mb-4"
+            className="patron-input"
             required
           />
         </div>
-        <button type="submit" className="submit-button">
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white text-sm px-4 py-2 rounded-md shadow hover:bg-blue-600 transition-all"
+        >
           Add Patron
         </button>
       </form>
