@@ -92,7 +92,7 @@ const Items: React.FC = () => {
   // Function to make item available
   const handleMakeAvailable = async (itemID: number) => {
     try {
-      const response = await fetch(`http://localhost:5001/items/${itemID}/make-available`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/items/${itemID}/make-available`, {
         method: "PUT",
       });
       if (response.ok) {
