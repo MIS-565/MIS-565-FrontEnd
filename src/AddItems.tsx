@@ -84,8 +84,10 @@ const AddItem = () => {
   };
 
   return (
-    <div className="add-item-container">
-      <h2>Add New Item</h2>
+    <div className="add-item-container ">
+      <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+        Add New Item
+      </h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -129,13 +131,19 @@ const AddItem = () => {
           />
         </div>
 
-        <button type="submit" className="submit-button">
+        <button
+          type="submit"
+          className="w-full bg-green-500 text-white text-sm px-4 py-2 rounded-md shadow hover:bg-blue-600 transition-all"
+        >
           Add Item
         </button>
       </form>
 
       {/* Back to Items button */}
-      <button onClick={handleBackToItems} className="back-to-items-button">
+      <button
+        onClick={handleBackToItems}
+        className="w-full bg-blue-500 text-white text-sm px-4 py-2 rounded-md shadow hover:bg-blue-600 transition-all"
+      >
         Back to Items
       </button>
 

@@ -3,6 +3,7 @@
     max-width: 400px;
     margin: auto;
     padding: 30px;
+    margin-top: 50px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
@@ -11,6 +12,7 @@
 .add-item-container h2 {
     text-align: center;
     color: #333;
+
 }
 
 .item-form {
