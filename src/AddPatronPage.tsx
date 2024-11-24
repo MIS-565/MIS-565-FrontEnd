@@ -33,7 +33,7 @@ const AddPatron = () => {
     };
 
     try {
-      const response = await fetch("https://mis-565-front-end.vercel.app/patrons", {
+      const response = await fetch("https://mis-565-backend-production.up.railway.app/patrons", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

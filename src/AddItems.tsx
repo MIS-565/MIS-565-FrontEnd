@@ -48,7 +48,7 @@ const AddItem = () => {
     };
 
     try {
-      const response = await fetch("https://mis-565-front-end.vercel.app/items", {
+      const response = await fetch("https://mis-565-backend-production.up.railway.app/items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

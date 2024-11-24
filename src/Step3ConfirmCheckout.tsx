@@ -46,7 +46,7 @@ const Step3ConfirmCheckout = ({
       .slice(0, 3);
 
     try {
-      const response = await fetch("https://mis-565-front-end.vercel.app/checkoutItems", {
+      const response = await fetch("https://mis-565-backend-production.up.railway.app/checkoutItems", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ patronID, itemIDs: uniqueItemIDs }),

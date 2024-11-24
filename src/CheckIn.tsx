@@ -27,7 +27,7 @@ const CheckIn = () => {
   useEffect(() => {
     const fetchCheckedOutItems = async () => {
       try {
-        const response = await fetch("https://mis-565-front-end.vercel.app/checked-out");
+        const response = await fetch("https://mis-565-backend-production.up.railway.app/checked-out");
         if (response.ok) {
           const data = await response.json();
           setCheckedOutItems(data);
@@ -52,7 +52,7 @@ const CheckIn = () => {
 
     setIsProcessing(true);
     try {
-      const response = await fetch(`https://mis-565-front-end.vercel.app/check-in`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/check-in`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const CheckIn = () => {
 
     setIsRenewProcessing(true);
     try {
-      const response = await fetch(`https://mis-565-front-end.vercel.app/renew`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/renew`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

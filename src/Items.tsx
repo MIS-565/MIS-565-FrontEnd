@@ -50,7 +50,7 @@ const Items: React.FC = () => {
     const fetchItems = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://mis-565-front-end.vercel.app/items");
+        const response = await fetch("https://mis-565-backend-production.up.railway.app/items");
         const data = await response.json();
         setItems(data);
       } catch (error) {

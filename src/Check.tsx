@@ -40,7 +40,7 @@ const CheckoutPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://mis-565-front-end.vercel.app/patrons/${patronID}`,
+        `https://mis-565-backend-production.up.railway.app/patrons/${patronID}`,
         {
           method: "GET",
           headers: {
@@ -98,7 +98,7 @@ const CheckoutPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`https://mis-565-front-end.vercel.app/items/${itemID}`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/items/${itemID}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -133,7 +133,7 @@ const CheckoutPage: React.FC = () => {
 
     try {
       // Send patron ID and item ID to the backend for checkout
-      const response = await fetch("https://mis-565-front-end.vercel.app/checkoutItem", {
+      const response = await fetch("https://mis-565-backend-production.up.railway.app/checkoutItem", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

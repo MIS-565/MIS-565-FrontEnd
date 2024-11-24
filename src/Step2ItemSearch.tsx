@@ -23,7 +23,7 @@ const Step2ItemSearch = ({ onNext, onPrevious }: { onNext: () => void; onPreviou
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("https://mis-565-front-end.vercel.app/items");
+        const response = await fetch("https://mis-565-backend-production.up.railway.app/items");
         const data = await response.json();
         const availableItems = data.filter((item: Item) => item.STATUS == "AVAILABLE");
         setItems(availableItems);

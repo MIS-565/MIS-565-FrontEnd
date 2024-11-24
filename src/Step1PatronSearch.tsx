@@ -28,7 +28,7 @@ const Step1PatronSearch = ({
     }
     try {
       const response = await fetch(
-        `https://mis-565-front-end.vercel.app/patrons/${patronID}`,
+        `https://mis-565-backend-production.up.railway.app/patrons/${patronID}`,
         {
           method: "GET",
           headers: {
@@ -73,7 +73,7 @@ const Step1PatronSearch = ({
 
   const handleClearLateFees = async () => {
     try {
-      const response = await fetch(`https://mis-565-front-end.vercel.app/patrons/${patronID}/clear-late-fees`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}/clear-late-fees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const Step1PatronSearch = ({
 
   const handleRenewMembership = async () => {
     try {
-      const response = await fetch(`https://mis-565-front-end.vercel.app/patrons/${patronID}/renew-membership`, {
+      const response = await fetch(`https://mis-565-backend-production.up.railway.app/patrons/${patronID}/renew-membership`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

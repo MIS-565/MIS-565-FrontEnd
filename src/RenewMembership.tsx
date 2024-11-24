@@ -12,7 +12,7 @@ const RenewMembership: React.FC<RenewMembershipProps> = ({
   const handleRenewMembership = async () => {
     try {
       const response = await fetch(
-        `https://mis-565-front-end.vercel.app/api/renewMembership`,
+        `https://mis-565-backend-production.up.railway.app/api/renewMembership`,
         {
           method: "POST",
           headers: {
