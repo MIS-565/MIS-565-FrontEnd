@@ -114,7 +114,7 @@ const Items: React.FC = () => {
 
   const renderCell = (item: Item, columnKey: React.Key) => {
     const cellValue = item[columnKey as keyof Item];
-
+  
     switch (columnKey) {
       case "STATUS":
         const chipColor =
@@ -142,12 +142,6 @@ const Items: React.FC = () => {
         return (
           <div className="relative flex items-center gap-2">
             <Tooltip content="Details">
-            <button
-                onClick={() => handleMakeAvailable(item.ITEMID)}
-                className="make-available-button"
-              >
-                Make Available
-              </button>
               <Button
                 isIconOnly
                 size="sm"
@@ -177,6 +171,14 @@ const Items: React.FC = () => {
                 <DeleteIcon />
               </Button>
             </Tooltip>
+            {item.STATUS === "CHECKED IN" && (
+              <button
+                onClick={() => handleMakeAvailable(item.ITEMID)}
+                className="make-available-button"
+              >
+                Make Available
+              </button>
+            )}
           </div>
         );
       default:
